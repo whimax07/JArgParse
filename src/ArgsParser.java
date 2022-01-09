@@ -62,12 +62,19 @@ public class ArgsParser {
 
     private void validateOptions(ArgOption argOption) {
         if (argOption.shortKey == '\0' && argOption.longKey.isEmpty()) {
-            String message = "Nether a short or long key have been provided for the following Argument. \n" + argOption;
+            String message = "Nether a short or long key have been provided for the following Argument. \n"
+                    + "Argument option: " + argOption;
             throw new ArgumentOptionException(message);
         }
 
         if (argOption.longKey.length() == 1) {
-            throw new ArgumentOptionException("Long keys should be at least 2 charters long.");
+            throw new ArgumentOptionException("Long keys should be at least 2 charters long. \n"
+                    + "Argument option: " + argOption);
+        }
+
+        if (argOption.usage == null) {
+            throw new ArgumentOptionException("The usage of an argument option must be set. \n"
+                    + "Argument option: " + argOption);
         }
 
         checkForRepeatKeys(argOption);
@@ -319,22 +326,24 @@ public class ArgsParser {
 
 
     /**
-     * The format for args are:
+     * The format, set by usage, for args are:
      *      1) -k
      *      2) --Key-Word
      *      3) -k arg
      *      4) --Key-Word=arg
-     *      5) ... arg     // There can only be one of these positional args. The arg can be a list thought
-     *                     // e.g. ... file1 file2
+     *      5) ... argList     // There can only be one of these list args, and they are always at the end of the
+     *                         // command.
      *
      * The short key is `k`, the long key is `Key-Word`.
      *
-     * The position field describes if the key is to be parsed on its own `KEY` 1) and 2), a key-value pair `KEY_VALUE`
-     * 3) and 4) or a positional arg 5).
+     * The position field describes how to combine the received string. If the key is to be parsed on its own assign it
+     * `KEY` 1) and 2), if the argument should be a key-value pair assign `KEY_VALUE` 3) and 4) or if it should be a
+     * list arg assign `LIST` 5).
      *
-     * The description is what will be printed when the help is invoked.
+     * The description, alongside the short value example, long value example and list example will be used in the help.
+     * This is dependent on whether they are set, if they match the usage and if the associated key is set.
      *
-     * There are 3 reserved keys they are -h, --help and --Help.
+     * There are 3 reserved keys they are -h, --help and --Help. They print the help and stop excursion.
      */
     public static class ArgOption {
 
@@ -422,6 +431,7 @@ public class ArgsParser {
             this.description = description;
             return this;
         }
+
     }
 
     public static class ArgReceived {
