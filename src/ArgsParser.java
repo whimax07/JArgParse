@@ -576,7 +576,10 @@ public class ArgsParser {
         private void buildNameBox() {
             int nameSpace = LINE_WIDTH - (NAME_MARGIN * 2);
 
-            ArrayList<String> nameLines = lineWrapString(programmeDetails.programmeDescription, nameSpace);
+            String programmeName = (programmeDetails.programmeName.isEmpty())
+                    ? programmeDetails.commandName : programmeDetails.programmeName;
+
+            ArrayList<String> nameLines = lineWrapString(programmeName, nameSpace);
 
             boxProgrammeNameLines(nameLines);
 
@@ -691,13 +694,17 @@ public class ArgsParser {
         private ArrayList<String> buildInfo(ArgOption option, String keyLine) {
             infoWidth = calcInfoWidth(keyLine);
 
-            ArrayList<String> description = lineWrapString(option.description, infoWidth);
+            ArrayList<String> description = buildDescription(option);
 
             ArrayList<String> usageOption = buildUsage(option);
 
             ArrayList<String> examples = buildExamples(option);
 
-            return description;
+            ArrayList<String> infoLines = new ArrayList<>();
+            infoLines.addAll(description);
+            infoLines.addAll(usageOption);
+            infoLines.addAll(examples);
+            return infoLines;
         }
 
         private int calcInfoWidth(String keyLine) {
