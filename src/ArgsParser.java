@@ -318,65 +318,6 @@ public class ArgsParser {
 
 
 
-    public static class ProgrammeDetails {
-
-        private String commandName = "";
-
-        private String programmeName = "";
-
-        private String programmeDescription = "";
-
-        private String author = "";
-
-        private String version = "";
-
-
-        public String getCommandName() {
-            return commandName;
-        }
-
-        public ProgrammeDetails setCommandName(String commandName) {
-            this.commandName = commandName;
-            return this;
-        }
-
-        public String getProgrammeName() {
-            return programmeName;
-        }
-
-        public ProgrammeDetails setProgrammeName(String programmeName) {
-            this.programmeName = programmeName;
-            return this;
-        }
-
-        public String getProgrammeDescription() {
-            return programmeDescription;
-        }
-
-        public ProgrammeDetails setProgrammeDescription(String programmeDescription) {
-            this.programmeDescription = programmeDescription;
-            return this;
-        }
-
-        public String getAuthor() {
-            return author;
-        }
-
-        public ProgrammeDetails setAuthor(String author) {
-            this.author = author;
-            return this;
-        }
-
-        public String getVersion() {
-            return version;
-        }
-
-        public ProgrammeDetails setVersion(String version) {
-            this.version = version;
-            return this;
-        }
-    }
-
     /**
      * The format for args are:
      *      1) -k
@@ -516,15 +457,81 @@ public class ArgsParser {
                     ", Value='" + value + '\'' +
                     '}';
         }
+
     }
 
-    /**
-     * A helper class to auto format the help text. All measurements are mono-font cells.
-     */
+    public static class ProgrammeDetails {
+
+        /**
+         * This is the mnemonic used to call the programme. This field must be set by the user.
+         */
+        private String commandName = "";
+
+        /**
+         * This field is used in the help text. If this field is not set by the user commandName will be used instead.
+         */
+        private String programmeName = "";
+
+        private String programmeDescription = "";
+
+        private String author = "";
+
+        private String version = "";
+
+
+
+        public String getCommandName() {
+            return commandName;
+        }
+
+        public ProgrammeDetails setCommandName(String commandName) {
+            this.commandName = commandName;
+            return this;
+        }
+
+        public String getProgrammeName() {
+            return programmeName;
+        }
+
+        public ProgrammeDetails setProgrammeName(String programmeName) {
+            this.programmeName = programmeName;
+            return this;
+        }
+
+        public String getProgrammeDescription() {
+            return programmeDescription;
+        }
+
+        public ProgrammeDetails setProgrammeDescription(String programmeDescription) {
+            this.programmeDescription = programmeDescription;
+            return this;
+        }
+
+        public String getAuthor() {
+            return author;
+        }
+
+        public ProgrammeDetails setAuthor(String author) {
+            this.author = author;
+            return this;
+        }
+
+        public String getVersion() {
+            return version;
+        }
+
+        public ProgrammeDetails setVersion(String version) {
+            this.version = version;
+            return this;
+        }
+
+    }
+
     private class HelpBuilder {
 
         public StringBuilder stringBuilder = new StringBuilder();
 
+        // All measurements are mono-font cells.
         private int infoWidth;
 
         private static final int LINE_WIDTH = 100;
@@ -691,6 +698,14 @@ public class ArgsParser {
             }
 
             return LINE_WIDTH - indentWidth;
+        }
+
+        private ArrayList<String> buildDescription(ArgOption option) {
+            if (option.description.isEmpty()) {
+                return new ArrayList<>(0);
+            }
+
+            return lineWrapString(option.description, infoWidth);
         }
 
         private ArrayList<String> buildUsage(ArgOption option) {
