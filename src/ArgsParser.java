@@ -144,6 +144,7 @@ public class ArgsParser {
     }
 
     private void parseInputs() {
+        //noinspection ForLoopReplaceableByForEach
         for (int i = 0; i < rawInputs.length; i++) {
             parseInput(rawInputs[i]);
         }
@@ -231,12 +232,12 @@ public class ArgsParser {
     private void longKeyErrors(String[] splitInput, ArgOption argOption, boolean isKeyValuePair) {
         if (isKeyValuePair && splitInput.length < 2) {
             String message = "A key for a key-value pair was used without the value. Format: ... --key=value ... \n"
-                    + "Current parse: " + splitInput + "\n"
+                    + "Current parse: " + Arrays.toString(splitInput) + "\n"
                     + "Key-value pair options: " + argOption;
             throw new ParseArgumentException(message);
         } else if (!isKeyValuePair && splitInput.length >= 2 && !splitInput[1].isEmpty()) {
             String message = "A key was used as a pair with a value. Format: ... --key ... \n"
-                    + "Current parse: " + splitInput + "\n"
+                    + "Current parse: " + Arrays.toString(splitInput) + "\n"
                     + "Key options: " + argOption;
             throw new ParseArgumentException(message);
         }
@@ -247,11 +248,11 @@ public class ArgsParser {
             String message;
             if (isKeyValuePair) {
                 message = "A key was used as a pair with a value. Format: ... -key value ..."
-                        + "Current parse: " + splitInput + "\n"
+                        + "Current parse: " + Arrays.toString(splitInput) + "\n"
                         + "Key-value pair options: " + argOption;
             } else {
                 message = "A key was used as a pair with a value. Format: ... -key ..."
-                        + "Current parse: " + splitInput + "\n"
+                        + "Current parse: " + Arrays.toString(splitInput) + "\n"
                         + "Key options: " + argOption;
             }
             throw new ParseArgumentException(message);
@@ -271,6 +272,7 @@ public class ArgsParser {
         currentKeyPair = null;
         expectingKey = true;
     }
+
 
 
     // Note(Max): Looking at the access and review methods of a parse I wonder if keys needing to be String is correct.
