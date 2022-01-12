@@ -51,7 +51,7 @@ public class ArgsParser {
         }
 
         if (programmeDetails.commandName.isEmpty()) {
-            throw new RuntimeException("The command mnemonic/name must be set.");
+            throw new ArgumentOptionException("The command mnemonic/name must be set.");
         }
 
         this.programmeDetails = programmeDetails;
@@ -406,24 +406,27 @@ public class ArgsParser {
             return shortValueExample;
         }
 
-        public void setShortValueExample(String shortValueExample) {
+        public ArgOption setShortValueExample(String shortValueExample) {
             this.shortValueExample = shortValueExample;
+            return this;
         }
 
         public String getLongKeyValueExample() {
             return longKeyValueExample;
         }
 
-        public void setLongKeyValueExample(String longKeyValueExample) {
+        public ArgOption setLongKeyValueExample(String longKeyValueExample) {
             this.longKeyValueExample = longKeyValueExample;
+            return this;
         }
 
         public String getListExample() {
             return listExample;
         }
 
-        public void setListExample(String listExample) {
+        public ArgOption setListExample(String listExample) {
             this.listExample = listExample;
+            return this;
         }
 
         public String getDescription() {
