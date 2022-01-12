@@ -42,8 +42,12 @@ public class ArgsParser {
     }
 
     public ArgsParser(ProgrammeDetails programmeDetails, ArrayList<ArgOption> argOptions) {
-        if (argOptions.isEmpty()) {
-            throw new RuntimeException("A nonzero number of argument options must be defined.");
+        if (programmeDetails == null) {
+            throw new NullPointerException("programmeDetails cannot be null.");
+        }
+
+        if (argOptions == null) {
+            throw new NullPointerException("argOptions cannot be null.");
         }
 
         if (programmeDetails.commandName.isEmpty()) {
