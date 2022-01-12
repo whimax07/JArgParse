@@ -613,6 +613,23 @@ public class ArgsParser {
             addLinesToHelpText(nameLines);
         }
 
+        private void boxProgrammeNameLines(ArrayList<String> nameLines) {
+            for (int i = 0; i < nameLines.size(); i++) {
+                String line = nameLines.get(i);
+
+                int rightSpace = (LINE_WIDTH - line.length()) / 2;
+                int leftSpace = LINE_WIDTH - rightSpace;
+
+                String newLine = dupeString("=", leftSpace - 1) + " " + line
+                        + " " + dupeString("=", rightSpace - 1);
+
+                nameLines.set(i, newLine);
+            }
+
+            nameLines.add(0, dupeString("=", LINE_WIDTH));
+            nameLines.add(dupeString("=", LINE_WIDTH));
+        }
+
         private void buildProgrammeDescription() {
             String description = programmeDetails.programmeDescription;
 
@@ -644,23 +661,6 @@ public class ArgsParser {
             }
 
             addLinesToHelpText(lineWrapString(details, LINE_WIDTH));
-        }
-
-        private void boxProgrammeNameLines(ArrayList<String> nameLines) {
-            for (int i = 0; i < nameLines.size(); i++) {
-                String line = nameLines.get(i);
-
-                int rightSpace = (LINE_WIDTH - line.length()) / 2;
-                int leftSpace = LINE_WIDTH - rightSpace;
-
-                String newLine = dupeString("=", leftSpace - 1) + " " + line
-                        + " " + dupeString("=", rightSpace - 1);
-
-                nameLines.set(i, newLine);
-            }
-
-            nameLines.add(0, dupeString("=", LINE_WIDTH));
-            nameLines.add(dupeString("=", LINE_WIDTH));
         }
 
         private void buildOptionHelpBlocks() {
@@ -800,15 +800,15 @@ public class ArgsParser {
             return exampleLines;
         }
 
-        private void mergeAndIndent(String keyLine, ArrayList<String> descriptionLines) {
-            if (descriptionLines.size() >= 1) {
+        private void mergeAndIndent(String keyLine, ArrayList<String> infoLines) {
+            if (infoLines.size() >= 1) {
                 // The key text is already packed.
-                descriptionLines.set(0, keyLine + descriptionLines.get(0));
+                infoLines.set(0, keyLine + infoLines.get(0));
             }
 
-            for (int i = 1; i < descriptionLines.size(); i++) {
-                String newLine = dupeString(" ", keyLine.length()) + descriptionLines.get(i);
-                descriptionLines.set(0, newLine);
+            for (int i = 1; i < infoLines.size(); i++) {
+                String newLine = dupeString(" ", keyLine.length()) + infoLines.get(i);
+                infoLines.set(0, newLine);
             }
         }
 
