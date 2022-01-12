@@ -65,7 +65,7 @@ public class ArgsParser {
     }
 
     private void validateOptions(ArgOption argOption) {
-        if (argOption.shortKey == '\0' && argOption.longKey.isEmpty()) {
+        if (argOption.shortKey == '\0' && argOption.longKey.isEmpty() && argOption.usage != E_Usage.LIST) {
             String message = "Nether a short or long key have been provided for the following Argument. \n"
                     + "Argument option: " + argOption;
             throw new ArgumentOptionException(message);
