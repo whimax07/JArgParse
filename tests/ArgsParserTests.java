@@ -5,12 +5,109 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ArgsParserTests {
 
-    @BeforeEach
-    void setUp() {
+    ArgsParser.ProgrammeDetails makeProgrammeDetails() {
+        return new ArgsParser.ProgrammeDetails().setCommandName("ColColorize");
+    }
+
+    ArgsParser.ArgOption[] colColorizeOptions() {
+        return new ArgsParser.ArgOption[] {
+                new ArgsParser.ArgOption()
+                        .setShortKey('b')
+                        .setLongKey("Set-Background")
+                        .setUsage(ArgsParser.E_Usage.KEY_VALUE)
+                        .setDescription("This command sets the background colour of the console using an RGB 0-255 triplet.")
+                        .setShortValueExample("(0,0,0)")
+                        .setLongKeyValueExample("(0,0,0)"),
+
+                new ArgsParser.ArgOption()
+                        .setShortKey('t')
+                        .setLongKey("Set-Text")
+                        .setUsage(ArgsParser.E_Usage.KEY_VALUE)
+                        .setDescription("This command sets the text colour if the console using an RGB 0-255 triplet."),
+
+                new ArgsParser.ArgOption()
+                        .setLongKey("Use-Defaults")
+                        .setUsage(ArgsParser.E_Usage.KEY)
+                        .setDescription("This command tells the console revert to its default colour scheme. This should be used on its own."),
+
+                new ArgsParser.ArgOption()
+                        .setUsage(ArgsParser.E_Usage.LIST)
+                        .setDescription("This will take the path to json files and read a \"Set Console Colours\" configuration file.")
+        };
+    }
+
+
+
+    @Test
+    void parseArgConstructor_failsIfNull() {
+        assertThrows(Exception.class,
+                () -> new ArgsParser(null, new ArgsParser.ArgOption[0]));
+        assertThrows(Exception.class,
+                () -> new ArgsParser(new ArgsParser.ProgrammeDetails(), (ArgsParser.ArgOption[]) null));
+    }
+
+    @Test
+    void parseArgConstructor_passIfEmptyAndCommandSet() {
+        new ArgsParser(makeProgrammeDetails(), new ArgsParser.ArgOption[0]);
+    }
+
+    @Test
+    void failOnNoKeys() {
+        ArgsParser.ArgOption[] options = new ArgsParser.ArgOption[] {
+                new ArgsParser.ArgOption()
+        };
+
+        ArgsParser.ArgumentOptionException exception = assertThrows(ArgsParser.ArgumentOptionException.class,
+                () -> new ArgsParser(makeProgrammeDetails(), options));
+
+        System.out.println(exception.toString());
+    }
+
+    @Test
+    void failNoUsage() {
+        ArgsParser.ArgOption[] options = new ArgsParser.ArgOption[] {
+                new ArgsParser.ArgOption().setShortKey('a').setLongKey("A1")
+        };
+
+        ArgsParser.ArgumentOptionException exception = assertThrows(ArgsParser.ArgumentOptionException.class,
+                () -> new ArgsParser(makeProgrammeDetails(), options));
+
+        System.out.println(exception.toString());
+    }
+
+    @Test
+    void failShortLongKey() {
+        ArgsParser.ArgOption[] options = new ArgsParser.ArgOption[] {
+                new ArgsParser.ArgOption().setShortKey('a').setLongKey("A").setUsage(ArgsParser.E_Usage.KEY)
+        };
+
+        ArgsParser.ArgumentOptionException exception = assertThrows(ArgsParser.ArgumentOptionException.class,
+                () -> new ArgsParser(makeProgrammeDetails(), options));
+
+        System.out.println(exception.toString());
+    }
+
+    @Test
+    void failDuplicateKeys() {
+        ArgsParser.ArgOption[] options = new ArgsParser.ArgOption[] {
+                new ArgsParser.ArgOption().setShortKey('a').setLongKey("A1").setUsage(ArgsParser.E_Usage.KEY),
+                new ArgsParser.ArgOption().setShortKey('a').setLongKey("A2").setUsage(ArgsParser.E_Usage.KEY)
+        };
+
+        ArgsParser.ArgumentOptionException exception = assertThrows(ArgsParser.ArgumentOptionException.class,
+                () -> new ArgsParser(makeProgrammeDetails(), options));
+
+        System.out.println(exception.toString());
+    }
+
+    @Test
+    void passComplexOptions() {
+        new ArgsParser(makeProgrammeDetails(), colColorizeOptions());
     }
 
     @Test
     void pareArgs() {
+
     }
 
     @Test
@@ -45,12 +142,14 @@ This program set the colours used by this console.
 By Max Whitehouse, version 1.0.0.
 
 
-  -b, --Set-Background                 This command sets the background colour of the console.
+  -b, --Set-Background                 This command sets the background colour of the console using
+									   an RGB 0-255 triplet.
 									   Usage: Key-value pair.
 									   Example: ColColorize ... -b (0,0,0) ...
 									   Example: ColColorize ... -Set-Background=(0,0,0) ...
 
-  -t, --Set-Text                       This command sets the text colour if the console.
+  -t, --Set-Text                       This command sets the text colour if the console using an RGB
+									   0-255 triplet.
                                        Usage: Key-value pair.
 									   Example: ColColorize ... -t {value} ...
 									   Example: ColColorize ... -Set-Text={value} ...
