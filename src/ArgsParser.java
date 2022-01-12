@@ -330,22 +330,21 @@ public class ArgsParser {
 
 
     /**
-     * The format, set by usage, for args are:
-     *      1) -k
-     *      2) --Key-Word
-     *      3) -k arg
-     *      4) --Key-Word=arg
-     *      5) ... argList     // There can only be one of these list args, and they are always at the end of the
-     *                         // command.
+     * The format, set by usage, for args are: <br>
+     * &emsp     1) -k <br>
+     * &emsp     2) --Key-Word <br>
+     * &emsp     3) -k arg <br>
+     * &emsp     4) --Key-Word=arg <br>
+     * &emsp     5) ... argList     &emsp// There can only be one of these list args, and they are always at the end of the command. <br><br>
      *
-     * The short key is `k`, the long key is `Key-Word`.
+     * The short key is `k`, the long key is `Key-Word`. <br><br>
      *
      * The position field describes how to combine the received string. If the key is to be parsed on its own assign it
      * `KEY` 1) and 2), if the argument should be a key-value pair assign `KEY_VALUE` 3) and 4) or if it should be a
-     * list arg assign `LIST` 5).
+     * list arg assign `LIST` 5). <br><br>
      *
      * The description, alongside the short value example, long value example and list example will be used in the help.
-     * This is dependent on whether they are set, if they match the usage and if the associated key is set.
+     * This is dependent on whether they are set, if they match the usage and if the associated key is set. <br><br>
      *
      * There are 3 reserved keys they are -h, --help and --Help. They print the help and stop excursion.
      */
@@ -365,14 +364,14 @@ public class ArgsParser {
 
         private String description = "";
 
+        private boolean useOnItsOwn = false;
+
         @SuppressWarnings({"unused", "FieldMayBeFinal"})
         private E_Types typeSig = null;
 
         @SuppressWarnings({"unused", "FieldMayBeFinal"})
         private boolean repeated = false;
 
-        @SuppressWarnings({"unused", "FieldMayBeFinal"})
-        private boolean useOnItsOwn = false;
 
 
 
@@ -436,6 +435,27 @@ public class ArgsParser {
             return this;
         }
 
+        public boolean isUseOnItsOwn() {
+            return useOnItsOwn;
+        }
+
+        public ArgOption setUseOnItsOwn(boolean useOnItsOwn) {
+            this.useOnItsOwn = useOnItsOwn;
+            return this;
+        }
+
+        @Override
+        public String toString() {
+            return "ArgOption{" +
+                    "shortKey=" + shortKey +
+                    ", longKey='" + longKey + '\'' +
+                    ", usage=" + usage +
+                    ", shortValueExample='" + shortValueExample + '\'' +
+                    ", longKeyValueExample='" + longKeyValueExample + '\'' +
+                    ", listExample='" + listExample + '\'' +
+                    ", description='" + description + '\'' +
+                    '}';
+        }
     }
 
     public static class ArgReceived {
@@ -749,7 +769,8 @@ public class ArgsParser {
         }
 
         private ArrayList<String> buildListExample(ArgOption option) {
-            String exampleBuilder = EXAMPLE_PREFIX + programmeDetails.commandName + " ... " + option.listExample;
+            String ellipses = (option.useOnItsOwn) ? " " : " ... ";
+            String exampleBuilder = EXAMPLE_PREFIX + programmeDetails.commandName + ellipses + option.listExample;
             return lineWrapString(exampleBuilder, infoWidth);
         }
 
@@ -757,16 +778,18 @@ public class ArgsParser {
             String commandName = programmeDetails.commandName;
             ArrayList<String> exampleLines = new ArrayList<>();
 
+            String ellipses = (option.useOnItsOwn) ? " " : " ... ";
+
             if (option.shortKey != '\0') {
-                String shortExample = EXAMPLE_PREFIX + commandName + " ... -" + option.shortKey + " " + option.shortKey
-                        + " ...";
+                String shortExample = EXAMPLE_PREFIX + commandName + ellipses + "-" + option.shortKey + " "
+                        + option.shortKey + ellipses;
 
                 exampleLines.addAll(lineWrapString(shortExample, infoWidth));
             }
 
             if (!option.longKey.isEmpty()) {
-                String longExample = EXAMPLE_PREFIX + commandName + " ... --" + option.longKey + "=" + option.longKey
-                        + " ...";
+                String longExample = EXAMPLE_PREFIX + commandName + ellipses + "--" + option.longKey + "="
+                        + option.longKey + ellipses;
 
                 exampleLines.addAll(lineWrapString(longExample, infoWidth));
             }
