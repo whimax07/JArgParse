@@ -1,5 +1,6 @@
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -41,14 +42,19 @@ class ArgsParserTests {
     @Test
     void parseArgConstructor_failsIfNull() {
         assertThrows(Exception.class,
-                () -> new ArgsParser(null, new ArgsParser.ArgOption[0]));
+                () -> new ArgsParser(null, (ArgsParser.ArgOption[]) null));
         assertThrows(Exception.class,
                 () -> new ArgsParser(new ArgsParser.ProgrammeDetails(), (ArgsParser.ArgOption[]) null));
     }
 
     @Test
     void parseArgConstructor_passIfEmptyAndCommandSet() {
-        new ArgsParser(makeProgrammeDetails(), new ArgsParser.ArgOption[0]);
+        new ArgsParser(makeProgrammeDetails(), new ArrayList<>());
+    }
+
+    @Test
+    void parseArgConstructor_passEnumList() {
+        new ArgsParser(makeProgrammeDetails(), EnumArgOptions.class);
     }
 
     @Test
@@ -169,4 +175,44 @@ By Max Whitehouse, version 1.0.0.
     @Test
     void getHelpText() {
     }
+
+
+
+    private enum EnumArgOptions implements ArgsParser.EnumOptions {
+
+        BACKGROUND (new ArgsParser.ArgOption()
+                .setShortKey('b')
+                .setLongKey("Set-Background")
+                .setUsage(ArgsParser.E_Usage.KEY_VALUE)
+                .setDescription("This command sets the background colour of the console using an RGB 0-255 triplet.")
+                .setShortValueExample("(0,0,0)")
+                .setLongKeyValueExample("(0,0,0)")),
+
+        TEXT (new ArgsParser.ArgOption()
+                .setShortKey('t')
+                .setLongKey("Set-Text")
+                .setUsage(ArgsParser.E_Usage.KEY_VALUE)
+                .setDescription("This command sets the text colour if the console using an RGB 0-255 triplet.")),
+
+        RESET (new ArgsParser.ArgOption()
+                .setLongKey("Use-Defaults")
+                .setUsage(ArgsParser.E_Usage.KEY)
+                .setDescription("This command tells the console revert to its default colour scheme. This should be used on its own.")),
+
+        CONFIGS (new ArgsParser.ArgOption()
+                .setUsage(ArgsParser.E_Usage.LIST)
+                .setDescription("This will take the path to json files and read a \"Set Console Colours\" configuration file."));
+
+        private final ArgsParser.ArgOption option;
+
+        EnumArgOptions(ArgsParser.ArgOption option) {
+            this.option = option;
+        }
+
+        public ArgsParser.ArgOption get() {
+            return option;
+        }
+
+    }
+
 }

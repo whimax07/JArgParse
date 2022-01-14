@@ -1,9 +1,7 @@
 // By Max Whitehouse.
 
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
+import java.util.*;
 
 import static java.lang.System.exit;
 
@@ -36,6 +34,41 @@ public class ArgsParser {
     private boolean expectingKey = false;
 
 
+
+    /**
+     * Make an enum that implements EnumOptions and has a field that contains an ArgOption. Then call {@code
+     * ArgParser(programmeDetails, EnumArgOptions.class);} <br><br>
+     *
+     * Why? Because then you can index into the results of the parse with the enum. <br>
+     *
+     * <pre> {@code
+     * enum EnumArgOptions implements EnumOptions {
+     *     OPTION1 (new ArgOption(...)),
+     *     ... ;
+     *
+     *     private ArgOption option;
+     *
+     *     EnumArgOptions(ArgOption option) {
+     *         this.option = option;
+     *     }
+     *
+     *     public ArgOption get() {
+     *         return option;
+     *     }
+     * } } </pre>
+     */
+    public <E extends Enum<E> & EnumOptions> ArgsParser(ProgrammeDetails programmeDetails, Class<E> enumArgOptions) {
+        this(programmeDetails, convertEnumToOptionsList(enumArgOptions));
+    }
+
+    private static <E extends Enum<E> & EnumOptions> ArrayList<ArgOption>
+    convertEnumToOptionsList(Class<E> enumArgOptions) {
+        ArrayList<ArgOption> argOptions = new ArrayList<>();
+        for (EnumOptions enumOption : enumArgOptions.getEnumConstants()) {
+            argOptions.add(enumOption.get());
+        }
+        return argOptions;
+    }
 
     public ArgsParser(ProgrammeDetails programmeDetails, ArgOption[] argOptions) {
         this(programmeDetails, new ArrayList<>(Arrays.asList(argOptions)));
@@ -893,6 +926,10 @@ public class ArgsParser {
         KEY,
         KEY_VALUE,
         LIST
+    }
+
+    public interface EnumOptions {
+        ArgOption get();
     }
 
 }
