@@ -119,6 +119,11 @@ class ArgsParserTests {
     }
 
     @Test
+    void pareArgs() {
+
+    }
+
+    @Test
     void isPassed() {
     }
 
