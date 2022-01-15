@@ -58,7 +58,7 @@ class ArgsParserTests {
     }
 
     @Test
-    void failOnNoKeys() {
+    void parseArgConstructor_failOnNoKeys() {
         ArgsParser.ArgOption[] options = new ArgsParser.ArgOption[] {
                 new ArgsParser.ArgOption()
         };
@@ -70,7 +70,7 @@ class ArgsParserTests {
     }
 
     @Test
-    void failNoUsage() {
+    void parseArgConstructor_failNoUsage() {
         ArgsParser.ArgOption[] options = new ArgsParser.ArgOption[] {
                 new ArgsParser.ArgOption().setShortKey('a').setLongKey("A1")
         };
@@ -82,7 +82,7 @@ class ArgsParserTests {
     }
 
     @Test
-    void failShortLongKey() {
+    void parseArgConstructor_failShortLongKey() {
         ArgsParser.ArgOption[] options = new ArgsParser.ArgOption[] {
                 new ArgsParser.ArgOption().setShortKey('a').setLongKey("A").setUsage(ArgsParser.E_Usage.KEY)
         };
@@ -94,7 +94,7 @@ class ArgsParserTests {
     }
 
     @Test
-    void failDuplicateKeys() {
+    void parseArgConstructor_failDuplicateKeys() {
         ArgsParser.ArgOption[] options = new ArgsParser.ArgOption[] {
                 new ArgsParser.ArgOption().setShortKey('a').setLongKey("A1").setUsage(ArgsParser.E_Usage.KEY),
                 new ArgsParser.ArgOption().setShortKey('a').setLongKey("A2").setUsage(ArgsParser.E_Usage.KEY)
@@ -107,13 +107,15 @@ class ArgsParserTests {
     }
 
     @Test
-    void passComplexOptions() {
+    void parseArgConstructor_passComplexOptions() {
         new ArgsParser(makeProgrammeDetails(), colColorizeOptions());
     }
 
     @Test
-    void pareArgs() {
-
+    void pareArgs_passOnEmptyCommandLine() {
+        ArgsParser argsParser = new ArgsParser(makeProgrammeDetails(), EnumArgOptions.class);
+        String[] input = new String[] {};
+        argsParser.pareArgs(input);
     }
 
     @Test
