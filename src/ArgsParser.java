@@ -23,6 +23,8 @@ public class ArgsParser {
 
     private ArgReceived listArg = null;
 
+    private final HashMap<ArgOption, ArgReceived> optionResultMap = new HashMap<>();
+
     private final HashMap<Character, ArgReceived> shortMap = new HashMap<>();
 
     private final HashMap<String, ArgReceived> longMap = new HashMap<>();
@@ -319,8 +321,14 @@ public class ArgsParser {
 
 
 
-    // Note(Max): Looking at the access and review methods of a parse I wonder if keys needing to be String is correct.
-    // Is ArgOption.{key} enough or should I provide backing?
+    public boolean isPassed(ArgOption option) {
+        if (option == null) {
+            throw new NullPointerException("The option received to look for a result was null.");
+        }
+
+        return optionResultMap.containsKey(option) && optionResultMap.get(option) != null;
+    }
+
     public boolean isPassed(String key) {
         boolean isShortKey = key.length() == 1;
         boolean hasShortKey = isShortKey && isShortPassed(key.charAt(0));
