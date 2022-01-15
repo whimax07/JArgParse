@@ -205,19 +205,19 @@ public class ArgsParser {
         // Expecting a value.
         checkMalformedValue(rawInput);
 
-        assignValue(rawInput);
+        assignValueAndCycleSearch(rawInput);
     }
 
     private void getKey(String rawInput) {
         if (rawInput.startsWith("--")) {
-            String input = rawInput.substring("--".length());
-            parseKey(input, true);
+            String trimmedInput = rawInput.substring("--".length());
+            parseKey(trimmedInput, true);
             return;
         }
 
         if (rawInput.startsWith("-")) {
-            String input = rawInput.substring("-".length());
-            parseKey(input, false);
+            String trimmedInput = rawInput.substring("-".length());
+            parseKey(trimmedInput, false);
             return;
         }
 
@@ -229,40 +229,88 @@ public class ArgsParser {
         currentKeyPair = listArg;
     }
 
-    private void checkMalformedValue(String rawInput) {
-        if (rawInput.startsWith("-")) {
-            String errorMessage =
-                    "Expected a value, got a key. Look for spaces and check if a key can except a value.\n"
-                    + "Last group: " + lastKeyPair + "\n"
-                    + "Malformed value: " + rawInput;
-            throw new ParseArgumentException(errorMessage);
-        }
-    }
-
     private void parseKey(String input, boolean isLongKey) {
-        // Get the key and a value. (value maybe empty.)
+        // Get the key and a value. Value maybe empty. This protects the short key from malformed name value pairs.
         String[] splitInput = input.split("=", 2);
 
         String key = splitInput[0];
+
         ArgOption argOption = keyMap.get(key);
+        ArgReceived argReceived = new ArgReceived(keyMap.get(key));
+
+        validateSplitInput(isLongKey, splitInput, argOption);
+
+        updateResultMaps(argReceived);
+
+        cycleSearch(isLongKey, splitInput, argReceived);
+    }
+
+    private void validateSplitInput(boolean isLongKey, String[] splitInput, ArgOption argOption) {
+        String key = splitInput[0];
 
         if (argOption == null) {
-            throw new ParseArgumentException("Key could not be found. \nBad key: " + input);
+            System.out.println("Key could not be found. Use -h for help. \nBad key: " + key);
+            System.exit(1);
         }
-
-        boolean isKeyValuePair = argOption.usage == E_Usage.KEY_VALUE;
 
         // Do some error checking for miss formed or miss parsed args.
         if (isLongKey) {
-            longKeyErrors(splitInput, argOption, isKeyValuePair);
+            longKeyErrors(splitInput, argOption);
         } else {
-            shortKeyErrors(splitInput, argOption, isKeyValuePair);
+            shortKeyErrors(splitInput, argOption);
+        }
+    }
+
+    private void longKeyErrors(String[] splitInput, ArgOption argOption) {
+        boolean isKeyValuePair = argOption.usage == E_Usage.KEY_VALUE;
+
+        if (isKeyValuePair && splitInput.length < 2) {
+            String message = "A long key for a key-value pair was used without the value. Good format: ... --" + argOption.longKey + "=value ... \n"
+                    + "Current parse: " + Arrays.toString(splitInput) + "\n"
+                    + "Key-value pair options: " + argOption;
+            throw new ParseArgumentException(message);
+        } else if (!isKeyValuePair && splitInput.length >= 2) {
+            String message = "A long key was used as a pair with a value instead of a lone key. Good format: ... --" + argOption.longKey + "... \n"
+                    + "Current parse: " + Arrays.toString(splitInput) + "\n"
+                    + "Key options: " + argOption;
+            throw new ParseArgumentException(message);
+        }
+    }
+
+    private void shortKeyErrors(String[] splitInput, ArgOption argOption) {
+        boolean isKeyValuePair = argOption.usage == E_Usage.KEY_VALUE;
+
+        if (splitInput.length >= 2) {
+            String message;
+            if (isKeyValuePair) {
+                message = "A short key was used as a pair with a value join via an equals. Good format: ... -" + argOption.shortKey + " value ..."
+                        + "Current parse: " + Arrays.toString(splitInput) + "\n"
+                        + "Key-value pair options: " + argOption;
+            } else {
+                message = "A short key was used with an equals sign."
+                        + "Current parse: " + Arrays.toString(splitInput) + "\n"
+                        + "Key options: " + argOption;
+            }
+            throw new ParseArgumentException(message);
+        }
+    }
+
+    private void updateResultMaps(ArgReceived argReceived) {
+        ArgOption option = argReceived.option;
+
+        optionResultMap.put(option, argReceived);
+
+        if (option.shortKey != '\0') {
+            shortMap.put(option.shortKey, argReceived);
         }
 
-        ArgReceived argReceived = new ArgReceived(argOption);
-        longMap.put(argOption.longKey, argReceived);
-        shortMap.put(argOption.shortKey, argReceived);
+        if (!option.longKey.isEmpty()) {
+            longMap.put(option.longKey, argReceived);
+        }
+    }
 
+    private void cycleSearch(boolean isLongKey, String[] splitInput, ArgReceived argReceived) {
+        boolean isKeyValuePair = argReceived.option.usage == E_Usage.KEY_VALUE;
 
         if (isLongKey && isKeyValuePair) {
             argReceived.value = splitInput[1];
@@ -275,37 +323,17 @@ public class ArgsParser {
         expectingKey = isKeyValuePair;
     }
 
-    private void longKeyErrors(String[] splitInput, ArgOption argOption, boolean isKeyValuePair) {
-        if (isKeyValuePair && splitInput.length < 2) {
-            String message = "A key for a key-value pair was used without the value. Format: ... --key=value ... \n"
-                    + "Current parse: " + Arrays.toString(splitInput) + "\n"
-                    + "Key-value pair options: " + argOption;
-            throw new ParseArgumentException(message);
-        } else if (!isKeyValuePair && splitInput.length >= 2 && !splitInput[1].isEmpty()) {
-            String message = "A key was used as a pair with a value. Format: ... --key ... \n"
-                    + "Current parse: " + Arrays.toString(splitInput) + "\n"
-                    + "Key options: " + argOption;
-            throw new ParseArgumentException(message);
+    private void checkMalformedValue(String rawInput) {
+        if (rawInput.startsWith("-")) {
+            String errorMessage =
+                    "Expected a value, got a key. Look for spaces and check if a key can except a value.\n"
+                            + "Last group: " + lastKeyPair + "\n"
+                            + "Malformed value: " + rawInput;
+            throw new ParseArgumentException(errorMessage);
         }
     }
 
-    private void shortKeyErrors(String[] splitInput, ArgOption argOption, boolean isKeyValuePair) {
-        if (splitInput.length >= 2) {
-            String message;
-            if (isKeyValuePair) {
-                message = "A key was used as a pair with a value. Format: ... -key value ..."
-                        + "Current parse: " + Arrays.toString(splitInput) + "\n"
-                        + "Key-value pair options: " + argOption;
-            } else {
-                message = "A key was used as a pair with a value. Format: ... -key ..."
-                        + "Current parse: " + Arrays.toString(splitInput) + "\n"
-                        + "Key options: " + argOption;
-            }
-            throw new ParseArgumentException(message);
-        }
-    }
-
-    private void assignValue(String value) {
+    private void assignValueAndCycleSearch(String value) {
         // Note(Max): Once the first argument assigned to `listArg` is passed the all subsequent values should be a part
         // of the listArg value.
         if (listArg != null && listArg == currentKeyPair) {
