@@ -20,53 +20,29 @@ This program set the colours used by this console.
 By Max Whitehouse, version 1.0.0.
 
   -b, --Set-Background                 This command sets the background colour of the console using 
-									   an RGB 0-255 triplet.
-									   Usage: Key-value pair.
-									   Example: ColColorize ... -b (0,0,0) ...
-									   Example: ColColorize ... -Set-Background=(0,0,0) ...
+                                       an RGB 0-255 triplet.
+                                       Usage: Key-value pair.
+                                       Example: ColColorize ... -b (0,0,0) ...
+                                       Example: ColColorize ... -Set-Background=(0,0,0) ...
 
   -t, --Set-Text                       This command sets the text colour if the console using an RGB
-									   0-255 triplet.
+                                       0-255 triplet.
                                        Usage: Key-value pair.
-									   Example: ColColorize ... -t {value} ...
-									   Example: ColColorize ... -Set-Text={value} ...
+                                       Example: ColColorize ... -t {value} ...
+                                       Example: ColColorize ... -Set-Text={value} ...
 									   
   --Use-Defaults                       This command tells the console revert to it's default colour 
-									   scheme. This should be used on it's own.
-									   Usage: Key.
-									   Example: ColColourize --Use-Defaults
+                                       scheme. This should be used on it's own.
+                                       Usage: Key.
+                                       Example: ColColourize --Use-Defaults
 									   
 									   
   [SPACE DELIMITED LIST]               This will take the path to json files and read a "Set 
-								       Console Colours" configuration file.
-									   Usage: List, a space delimited list of values at the end of 
-									   the command.
-									   Example: ColColourize ... {value} {value} {value}
+                                       Console Colours" configuration file.
+                                       Usage: List, a space delimited list of values at the end of 
+                                       the command.
+                                       Example: ColColourize ... {value} {value} {value}
 									   
-									   
-									   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	
 
 
