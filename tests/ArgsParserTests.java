@@ -1,4 +1,5 @@
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 import java.util.ArrayList;
 
@@ -119,16 +120,33 @@ class ArgsParserTests {
     }
 
     @Test
-    void pareArgs() {
-
+    void pareArgs_failOneShortArgNoParam() {
+        ArgsParser argsParser = new ArgsParser(makeProgrammeDetails(), EnumArgOptions.class);
+        String[] input = new String[] {"-b"};
+        assertThrows(ArgsParser.ParseArgumentException.class, () -> argsParser.pareArgs(input));
     }
 
     @Test
-    void isPassed() {
+    void pareArgs_passOneShortArg() {
+        ArgsParser argsParser = new ArgsParser(makeProgrammeDetails(), EnumArgOptions.class);
+        String[] input = new String[] {"-b", "abc"};
+        assertDoesNotThrow(() -> argsParser.pareArgs(input));
     }
 
     @Test
-    void isShortPassed() {
+    void isPassed_shortKeyNoValue() {
+        ArgsParser argsParser = new ArgsParser(
+                new ArgsParser.ProgrammeDetails().setCommandName("Test_Prog"),
+                new ArgsParser.ArgOption[] {
+                        new ArgsParser.ArgOption().setShortKey('a').setUsage(ArgsParser.E_Usage.KEY)
+                }
+        );
+        String[] input = new String[] {"-a", "abc"};
+        argsParser.pareArgs(input);
+
+        assertTrue(argsParser.isPassed("a"));
+        assertTrue(argsParser.isShortPassed('a'));
+        assertNotNull(argsParser.getShortArgument('a'));
     }
 
     @Test
