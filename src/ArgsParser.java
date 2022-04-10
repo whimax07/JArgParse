@@ -184,7 +184,9 @@ public class ArgsParser {
     }
 
     private void initParseState() {
-        listArg = new ArgReceived(optionListArg);
+        if (optionListArg != null) {
+            listArg = new ArgReceived(optionListArg);
+        }
 
         // This can be true as pos args are treated as keys.
         expectingKey = true;

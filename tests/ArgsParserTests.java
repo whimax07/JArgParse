@@ -1,5 +1,4 @@
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 
 import java.util.ArrayList;
 
@@ -119,35 +118,6 @@ class ArgsParserTests {
         argsParser.pareArgs(input);
     }
 
-    @Test
-    void pareArgs_failOneShortArgNoParam() {
-        ArgsParser argsParser = new ArgsParser(makeProgrammeDetails(), EnumArgOptions.class);
-        String[] input = new String[] {"-b"};
-        assertThrows(ArgsParser.ParseArgumentException.class, () -> argsParser.pareArgs(input));
-    }
-
-    @Test
-    void pareArgs_passOneShortArg() {
-        ArgsParser argsParser = new ArgsParser(makeProgrammeDetails(), EnumArgOptions.class);
-        String[] input = new String[] {"-b", "abc"};
-        assertDoesNotThrow(() -> argsParser.pareArgs(input));
-    }
-
-    @Test
-    void isPassed_shortKeyNoValue() {
-        ArgsParser argsParser = new ArgsParser(
-                new ArgsParser.ProgrammeDetails().setCommandName("Test_Prog"),
-                new ArgsParser.ArgOption[] {
-                        new ArgsParser.ArgOption().setShortKey('a').setUsage(ArgsParser.E_Usage.KEY)
-                }
-        );
-        String[] input = new String[] {"-a", "abc"};
-        argsParser.pareArgs(input);
-
-        assertTrue(argsParser.isPassed("a"));
-        assertTrue(argsParser.isShortPassed('a'));
-        assertNotNull(argsParser.getShortArgument('a'));
-    }
 
     @Test
     void isLongPassed() {
@@ -199,45 +169,6 @@ By Max Whitehouse, version 1.0.0.
 */
     @Test
     void getHelpText() {
-    }
-
-
-
-    private enum EnumArgOptions implements ArgsParser.EnumOptions {
-
-        BACKGROUND (new ArgsParser.ArgOption()
-                .setShortKey('b')
-                .setLongKey("Set-Background")
-                .setUsage(ArgsParser.E_Usage.KEY_VALUE)
-                .setDescription("This command sets the background colour of the console using an RGB 0-255 triplet.")
-                .setShortValueExample("(0,0,0)")
-                .setLongKeyValueExample("(0,0,0)")),
-
-        TEXT (new ArgsParser.ArgOption()
-                .setShortKey('t')
-                .setLongKey("Set-Text")
-                .setUsage(ArgsParser.E_Usage.KEY_VALUE)
-                .setDescription("This command sets the text colour if the console using an RGB 0-255 triplet.")),
-
-        RESET (new ArgsParser.ArgOption()
-                .setLongKey("Use-Defaults")
-                .setUsage(ArgsParser.E_Usage.KEY)
-                .setDescription("This command tells the console revert to its default colour scheme. This should be used on its own.")),
-
-        CONFIGS (new ArgsParser.ArgOption()
-                .setUsage(ArgsParser.E_Usage.LIST)
-                .setDescription("This will take the path to json files and read a \"Set Console Colours\" configuration file."));
-
-        private final ArgsParser.ArgOption option;
-
-        EnumArgOptions(ArgsParser.ArgOption option) {
-            this.option = option;
-        }
-
-        public ArgsParser.ArgOption get() {
-            return option;
-        }
-
     }
 
 }
