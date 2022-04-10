@@ -375,6 +375,10 @@ public class ArgsParser {
 
 
 
+    public <T extends ArgsParser.EnumOptions> boolean isPassed(T option) {
+        return isPassed(option.get());
+    }
+
     public boolean isPassed(ArgOption option) {
         if (option == null) {
             throw new NullPointerException("The option received to look for a result was null.");
@@ -395,6 +399,10 @@ public class ArgsParser {
 
     public boolean isLongPassed(String longKey) {
         return longMap.containsKey(longKey);
+    }
+
+    public <T extends ArgsParser.EnumOptions> ArgReceived getArgument(T option) {
+        return optionResultMap.get(option.get());
     }
 
     public ArgReceived getArgument(String key) {
