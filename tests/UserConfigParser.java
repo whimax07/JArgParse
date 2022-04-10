@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class ArgsParserTests {
+class UserConfigParser {
 
     ArgsParser.ProgrammeDetails makeProgrammeDetails() {
         return new ArgsParser.ProgrammeDetails().setCommandName("ColColorize");
@@ -40,7 +40,7 @@ class ArgsParserTests {
 
 
     @Test
-    void parseArgConstructor_failsIfNull() {
+    void constructor_fail_if_programme_details_null() {
         assertThrows(Exception.class,
                 () -> new ArgsParser(null, (ArgsParser.ArgOption[]) null));
         assertThrows(Exception.class,
@@ -48,17 +48,17 @@ class ArgsParserTests {
     }
 
     @Test
-    void parseArgConstructor_passIfEmptyAndCommandSet() {
+    void constructor_pass_if_empty_and_command_set() {
         new ArgsParser(makeProgrammeDetails(), new ArrayList<>());
     }
 
     @Test
-    void parseArgConstructor_passEnumList() {
+    void constructor_pass_enum_class() {
         new ArgsParser(makeProgrammeDetails(), EnumArgOptions.class);
     }
 
     @Test
-    void parseArgConstructor_failOnNoKeys() {
+    void constructor_fail_on_no_keys() {
         ArgsParser.ArgOption[] options = new ArgsParser.ArgOption[] {
                 new ArgsParser.ArgOption()
         };
@@ -70,7 +70,7 @@ class ArgsParserTests {
     }
 
     @Test
-    void parseArgConstructor_failNoUsage() {
+    void constructor_fail_no_argument_usage() {
         ArgsParser.ArgOption[] options = new ArgsParser.ArgOption[] {
                 new ArgsParser.ArgOption().setShortKey('a').setLongKey("A1")
         };
@@ -82,7 +82,7 @@ class ArgsParserTests {
     }
 
     @Test
-    void parseArgConstructor_failShortLongKey() {
+    void constructor_fail_one_char_long_key() {
         ArgsParser.ArgOption[] options = new ArgsParser.ArgOption[] {
                 new ArgsParser.ArgOption().setShortKey('a').setLongKey("A").setUsage(ArgsParser.E_Usage.KEY)
         };
@@ -94,7 +94,7 @@ class ArgsParserTests {
     }
 
     @Test
-    void parseArgConstructor_failDuplicateKeys() {
+    void constructor_fail_duplicate_keys() {
         ArgsParser.ArgOption[] options = new ArgsParser.ArgOption[] {
                 new ArgsParser.ArgOption().setShortKey('a').setLongKey("A1").setUsage(ArgsParser.E_Usage.KEY),
                 new ArgsParser.ArgOption().setShortKey('a').setLongKey("A2").setUsage(ArgsParser.E_Usage.KEY)
@@ -107,68 +107,8 @@ class ArgsParserTests {
     }
 
     @Test
-    void parseArgConstructor_passComplexOptions() {
+    void constructor_pass_complex_options() {
         new ArgsParser(makeProgrammeDetails(), colColorizeOptions());
-    }
-
-    @Test
-    void pareArgs_passOnEmptyCommandLine() {
-        ArgsParser argsParser = new ArgsParser(makeProgrammeDetails(), EnumArgOptions.class);
-        String[] input = new String[] {};
-        argsParser.pareArgs(input);
-    }
-
-
-    @Test
-    void isLongPassed() {
-    }
-
-    @Test
-    void getArgument() {
-    }
-
-    @Test
-    void getShortArgument() {
-    }
-
-    @Test
-    void getLongPassed() {
-    }
-
-/* Target help output.
-===================================================================================================
-======================================= Set Console Colours =======================================
-===================================================================================================
-This program set the colours used by this console.
-By Max Whitehouse, version 1.0.0.
-
-
-  -b, --Set-Background                 This command sets the background colour of the console using
-									   an RGB 0-255 triplet.
-									   Usage: Key-value pair.
-									   Example: ColColorize ... -b (0,0,0) ...
-									   Example: ColColorize ... -Set-Background=(0,0,0) ...
-
-  -t, --Set-Text                       This command sets the text colour if the console using an RGB
-									   0-255 triplet.
-                                       Usage: Key-value pair.
-									   Example: ColColorize ... -t {value} ...
-									   Example: ColColorize ... -Set-Text={value} ...
-
-  --Use-Defaults                       This command tells the console revert to its default colour
-									   scheme. This should be used on its own.
-									   Usage: Key.
-									   Example: ColColorize --Use-Defaults
-
-  [SPACE DELIMITED LIST]               This will take the path to json files and read a "Set
-								       Console Colours" configuration file.
-									   Usage: List, a space delimited list of values at the end of
-									   the command.
-									   Example: ColColorize ... {value} {value} {value}
-
-*/
-    @Test
-    void getHelpText() {
     }
 
 }

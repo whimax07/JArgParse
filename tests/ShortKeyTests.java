@@ -11,14 +11,14 @@ public class ShortKeyTests {
 
 
     @Test
-    void pareArgs_fail_key_value_pair_no_value() {
+    void parse_input_fail_key_value_pair_no_value() {
         ArgsParser argsParser = new ArgsParser(makeProgrammeDetails(), EnumArgOptions.class);
         String[] input = new String[] {"-b"};
         assertThrows(ArgsParser.ParseArgumentException.class, () -> argsParser.pareArgs(input));
     }
 
     @Test
-    void pareArgs_pass_key_with_value() {
+    void parse_input_pass_key_with_value() {
         ArgsParser argsParser = new ArgsParser(
                 new ArgsParser.ProgrammeDetails().setCommandName("Test_Prog"),
                 new ArgsParser.ArgOption[] {
@@ -31,7 +31,7 @@ public class ShortKeyTests {
     }
 
     @Test
-    void pareArgs_pass_key_value_pair() {
+    void parse_input_pass_key_value_pair() {
         ArgsParser argsParser = new ArgsParser(makeProgrammeDetails(), EnumArgOptions.class);
         String[] input = new String[] {"-b", "abc"};
         assertDoesNotThrow(() -> argsParser.pareArgs(input));
