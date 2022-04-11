@@ -241,6 +241,7 @@ public class ArgsParser {
 
         String key = splitInput[0];
 
+
         ArgOption argOption = keyMap.get(key);
         ArgReceived argReceived = new ArgReceived(argOption);
 
@@ -248,6 +249,16 @@ public class ArgsParser {
             throw new ParseArgumentException("No key match.\n"
                     + "Passed Key: " + key + ".\n"
                     + "Input: " + input + ".");
+        }
+
+        if (!isLongKey && key.equals(argOption.longKey)) {
+            throw new ParseArgumentException("A long key has been passed with only one dash this effects argument formatting. Please add a dash.\n"
+                    + "Key: " + key + ".\n"
+                    + "Input: " + Arrays.toString(rawInputs));
+        } else if (isLongKey && key.charAt(0) == argOption.shortKey) {
+            throw new ParseArgumentException("A short key has been passed with two dash this effects argument formatting. Please remove the extra dash.\n"
+                    + "Key: " + key + ".\n"
+                    + "Input: " + Arrays.toString(rawInputs));
         }
 
         if (!expectingKey) {
