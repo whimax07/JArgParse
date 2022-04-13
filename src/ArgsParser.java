@@ -7,6 +7,7 @@ import java.util.HashMap;
 
 import static java.lang.System.exit;
 
+@SuppressWarnings("unused")
 public class ArgsParser {
 
     // Parser things.
@@ -476,7 +477,7 @@ public class ArgsParser {
         /**
          * The long key used for an argument. Should be more than one char long.
          * <br>
-         * Example: 'Window-Name' -> '--Window-Name'
+         * {@code Example: 'Window-Name' -> '--Window-Name'}
          */
         private String longKey = "";
 
@@ -488,14 +489,14 @@ public class ArgsParser {
         /**
          * An example usage of the short key that will be printed for the user if they use one of the help flags.
          * <br>
-         * Example: (1, 2, 3) -> ColColorize ... -t (1,2,3) ...
+         * {@code Example: (1, 2, 3) -> ColColorize ... -t (1,2,3) ...}
          */
         private String shortValueExample = "{value}";
 
         /**
          * An example usage of the long key that will be printed for the user if they use one of the help flags.
          * <br>
-         * Example: Bright Blue -> ColColorize ... -Text-Colour="Bright Blue" ...
+         * {@code Example: Bright Blue -> ColColorize ... -Text-Colour="Bright Blue" ...}
          */
         private String longKeyValueExample = "{value}";
 
@@ -503,7 +504,7 @@ public class ArgsParser {
          * An example usage of the space delimited list positional argument that will be printed for the user if they
          * use one of the help flags.
          * <br>
-         * Example: Max, Maximus and Maximilian -> BuildProfiles ... Max Maximus Maximilian
+         * {@code Example: Max, Maximus and Maximilian -> BuildProfiles ... Max Maximus Maximilian}
          */
         private String listExample = "{value} {value} {value}";
 
@@ -533,7 +534,7 @@ public class ArgsParser {
         }
 
         /**
-         * Return the short key, if not set will be '\0'. See {@link ArgsParser.ArgOption#shortKey}.
+         * Return the short key, if not set will be {@code '\0'}. See {@link ArgsParser.ArgOption#shortKey}.
          */
         public char getShortKey() {
             return shortKey;
