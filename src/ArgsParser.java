@@ -953,7 +953,7 @@ public class ArgsParser {
 
         private ArrayList<String> buildListExample(ArgOption option) {
             String ellipses = (option.useOnItsOwn) ? " " : " ... ";
-            String exampleBuilder = EXAMPLE_PREFIX + programmeDetails.commandName + ellipses + option.listExample;
+            String exampleBuilder = EXAMPLE_PREFIX + programmeDetails.commandName + ellipses + option.getListExample();
             return lineWrapString(exampleBuilder, infoWidth);
         }
 
