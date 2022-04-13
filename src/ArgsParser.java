@@ -269,6 +269,8 @@ public class ArgsParser {
         }
         expectingKey = false;
 
+        if (!argReceived.getValue().isEmpty() && argOption.repeated)
+
         switch (argOption.getUsage()) {
             case KEY:
                 if (isLongKey) {
@@ -464,20 +466,55 @@ public class ArgsParser {
      */
     public static class ArgOption {
 
+        /**
+         * The short key used for an argument. Should be a single char.
+         * <br>
+         * Example: 'w' -> '-w'
+         */
         private char shortKey = '\0';
 
+        /**
+         * The long key used for an argument. Should be more than one char long.
+         * <br>
+         * Example: 'Window-Name' -> '--Window-Name'
+         */
         private String longKey = "";
 
+        /**
+         * The way to use the argument. See {@link E_Usage} for a description of the options.
+         */
         private E_Usage usage = null;
 
+        /**
+         * An example usage of the short key that will be printed for the user if they use one of the help flags.
+         * <br>
+         * Example: (1, 2, 3) -> ColColorize ... -t (1,2,3) ...
+         */
         private String shortValueExample = "{value}";
 
+        /**
+         * An example usage of the long key that will be printed for the user if they use one of the help flags.
+         * <br>
+         * Example: Bright Blue -> ColColorize ... -Text-Colour="Bright Blue" ...
+         */
         private String longKeyValueExample = "{value}";
 
+        /**
+         * An example usage of the space delimited list positional argument that will be printed for the user if they
+         * use one of the help flags.
+         * <br>
+         * Example: Max, Maximus and Maximilian -> BuildProfiles ... Max Maximus Maximilian
+         */
         private String listExample = "{value} {value} {value}";
 
+        /**
+         * A description of what the argument is used for.
+         */
         private String description = "";
 
+        /**
+         * Whether or not this argument is supposed to be used without any other arguments. I.E. '--help'.
+         */
         private boolean useOnItsOwn = false;
 
         @SuppressWarnings({"unused", "FieldMayBeFinal"})
@@ -488,28 +525,48 @@ public class ArgsParser {
 
 
 
-
+        /**
+         * Return the long key if the argument has one set if not the short key is returned.
+         */
         public String getName() {
             return (longKey.isEmpty()) ? String.valueOf(shortKey) : longKey;
         }
 
+        /**
+         * Return the short key, if not set will be '\0'. See {@link ArgsParser.ArgOption#shortKey}.
+         */
         public char getShortKey() {
             return shortKey;
         }
 
+        /**
+         * Sets the short key. See {@link ArgsParser.ArgOption#shortKey}.
+         */
         public ArgOption setShortKey(char shortKey) {
             this.shortKey = shortKey;
             return this;
         }
 
+        /**
+         * Return the long key, if not set will be empty. See {@link ArgsParser.ArgOption#longKey}.
+         */
         public String getLongKey() {
             return longKey;
         }
 
+        /**
+         * Sets the long key. See {@link ArgsParser.ArgOption#longKey}.
+         *
+         * @throws ArgumentOptionException if the long key is not at least 2 chars long.
+         */
         public ArgOption setLongKey(String longKey) {
+            if (longKey.length() < 2) {
+                throw new ArgumentOptionException("Long keys should be at least 2 charters long. \n");
+            }
             this.longKey = longKey;
             return this;
         }
+
 
         public E_Usage getUsage() {
             return usage;
@@ -907,15 +964,15 @@ public class ArgsParser {
             String ellipses = (option.useOnItsOwn) ? " " : " ... ";
 
             if (option.shortKey != '\0') {
-                String shortExample = EXAMPLE_PREFIX + commandName + ellipses + "-" + option.shortKey + " "
-                        + option.shortKey + ellipses;
+                String shortExample = EXAMPLE_PREFIX + commandName + ellipses + "-" + option.getShortKey() + " "
+                        + option.getShortValueExample() + ellipses;
 
                 exampleLines.addAll(lineWrapString(shortExample, infoWidth));
             }
 
             if (!option.longKey.isEmpty()) {
-                String longExample = EXAMPLE_PREFIX + commandName + ellipses + "--" + option.longKey + "="
-                        + option.longKey + ellipses;
+                String longExample = EXAMPLE_PREFIX + commandName + ellipses + "--" + option.getLongKey() + "="
+                        + option.getLongKeyValueExample() + ellipses;
 
                 exampleLines.addAll(lineWrapString(longExample, infoWidth));
             }
