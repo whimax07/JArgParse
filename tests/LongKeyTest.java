@@ -11,7 +11,7 @@ public class LongKeyTest {
 
 
     @Test
-    void parse_args_fail_key_value_pair_no_value() {
+    void fail_key_value_pair_no_value() {
         ArgsParser argsParser = new ArgsParser(makeProgrammeDetails(), EnumArgOptions.class);
         String[] input = new String[] {"--Set-Text"};
         ArgsParser.ParseArgumentException e = assertThrows(
@@ -22,7 +22,7 @@ public class LongKeyTest {
     }
 
     @Test
-    void parse_args_pass_key_value_pair_no_value_with_equals() {
+    void pass_key_value_pair_no_value_with_equals() {
         ArgsParser argsParser = new ArgsParser(makeProgrammeDetails(), EnumArgOptions.class);
         String[] input = new String[] {"--Set-Text="};
         assertDoesNotThrow(() -> argsParser.pareArgs(input));
@@ -34,11 +34,18 @@ public class LongKeyTest {
     }
 
     @Test
-    void parse_args_pass_key_value_pair() {
+    void pass_key_value_pair() {
         ArgsParser argsParser = new ArgsParser(makeProgrammeDetails(), EnumArgOptions.class);
         String[] input = new String[] {"--Set-Text=Hi"};
         assertDoesNotThrow(() -> argsParser.pareArgs(input));
         assertTrue(argsParser.isPassed(EnumArgOptions.TEXT));
+    }
+
+    @Test
+    void fail_pass_the_same_key_more_than_once_without_allowing() {
+        ArgsParser argsParser = new ArgsParser(makeProgrammeDetails(), EnumArgOptions.class);
+        String[] input = new String[] {"--Set-Text=Hi --Set-Text=Yo"};
+        assertThrows(ArgsParser.ParseArgumentException.class, () -> argsParser.pareArgs(input));
     }
 
 }
