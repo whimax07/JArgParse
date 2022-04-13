@@ -1,2 +1,7 @@
 **.class
 out/**/*.txt
+out/**/*.html
+out/**/*.js
+out/**/*.css
+out/**/*.png
+out/**/element-list

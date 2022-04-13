@@ -448,11 +448,11 @@ public class ArgsParser {
 
     /**
      * The format, set by usage, for args are: <br>
-     * &emsp     1) -k <br>
-     * &emsp     2) --Key-Word <br>
-     * &emsp     3) -k arg <br>
-     * &emsp     4) --Key-Word=arg <br>
-     * &emsp     5) ... argList     &emsp// There can only be one of these list args, and they are always at the end of the command. <br><br>
+     * &emsp;     1) -k <br>
+     * &emsp;    2) --Key-Word <br>
+     * &emsp;     3) -k arg <br>
+     * &emsp;     4) --Key-Word=arg <br>
+     * &emsp;    5) ... argList     &emsp;// There can only be one of these list args, and they are always at the end of the command. <br><br>
      *
      * The short key is `k`, the long key is `Key-Word`. <br><br>
      *
