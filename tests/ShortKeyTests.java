@@ -54,6 +54,13 @@ public class ShortKeyTests {
     }
 
     @Test
+    void fail_passed_with_two_dashes() {
+        ArgsParser argsParser = new ArgsParser(makeProgrammeDetails(), EnumArgOptions.class);
+        String[] input = new String[] {"--b", "abc"};
+        assertThrows(ArgsParser.ParseArgumentException.class, () -> argsParser.pareArgs(input));
+    }
+
+    @Test
     void fail_pass_the_same_key_more_than_once_without_allowing() {
         ArgsParser argsParser = new ArgsParser(makeProgrammeDetails(), EnumArgOptions.class);
         String[] input = new String[] {"-t", "Hi", "-t", "Yo"};
