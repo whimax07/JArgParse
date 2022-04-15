@@ -1,5 +1,7 @@
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class MixedInputTest {
@@ -34,6 +36,34 @@ public class MixedInputTest {
                 argsParser.getArgument(EnumArgOptions.TEXT),
                 argsParser.getArgument(EnumArgOptions.TEXT.get().getLongKey())
         );
+    }
+
+    @Test
+    void pass_multiple_same_input_arguments_allowed() {
+        ArgsParser argsParser = new ArgsParser(
+                new ArgsParser.ProgrammeDetails().setCommandName("Test_Prog"),
+                new ArgsParser.ArgOption[] {
+                        new ArgsParser.ArgOption()
+                                .setShortKey('a')
+                                .setLongKey("Aaa")
+                                .setRepeatable(true)
+                                .setUsage(ArgsParser.E_Usage.KEY_VALUE)
+                }
+        );
+
+        String[] input = new String[] {"--Aaa=Hi", "--Aaa=They", "-a", "Some", "--Aaa=Do", "-a", "ABC", "-a", "def"};
+        argsParser.pareArgs(input);
+
+        assertTrue(argsParser.isPassed("a"));
+        assertEquals(6, argsParser.getArgument("a").getValues().size());
+
+        ArrayList<String> values = argsParser.getArgument("Aaa").getValues();
+        assertEquals("Hi", values.get(0));
+        assertEquals("They", values.get(1));
+        assertEquals("Some", values.get(2));
+        assertEquals("Do", values.get(3));
+        assertEquals("ABC", values.get(4));
+        assertEquals("def", values.get(5));
     }
 
 }
