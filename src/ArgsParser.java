@@ -65,8 +65,8 @@ public class ArgsParser {
         this(programmeDetails, convertEnumToOptionsList(enumArgOptions));
     }
 
-    private static <E extends Enum<E> & EnumOptions> ArrayList<ArgOption>
-    convertEnumToOptionsList(Class<E> enumArgOptions) {
+    private static <E extends Enum<E> & EnumOptions> ArrayList<ArgOption> convertEnumToOptionsList(
+            Class<E> enumArgOptions) {
         ArrayList<ArgOption> argOptions = new ArrayList<>();
         for (EnumOptions enumOption : enumArgOptions.getEnumConstants()) {
             argOptions.add(enumOption.get());
@@ -87,7 +87,7 @@ public class ArgsParser {
             throw new NullPointerException("argOptions cannot be null.");
         }
 
-        if (programmeDetails.commandName.isEmpty()) {
+        if (programmeDetails.getCommandName() == null || programmeDetails.getCommandName().isEmpty()) {
             throw new ArgumentOptionException("The command mnemonic/name must be set.");
         }
 
@@ -232,7 +232,7 @@ public class ArgsParser {
             throw new ParseArgumentException("A key was expected. Check for spaces. \nReceived: " + rawInput + "\n");
         }
         // This must be the first positional arg.
-        listArg.value += rawInput;
+        listArg.addValue(rawInput);
         currentKeyPair = listArg;
     }
 
@@ -242,9 +242,9 @@ public class ArgsParser {
 
         String key = splitInput[0];
 
-
         ArgOption argOption = keyMap.get(key);
-        ArgReceived argReceived = new ArgReceived(argOption);
+        ArgReceived argReceived = optionResultMap.computeIfAbsent(argOption, ArgReceived::new);
+
 
         if (argOption == null) {
             throw new ParseArgumentException("No key match.\n"
@@ -253,11 +253,13 @@ public class ArgsParser {
         }
 
         if (!isLongKey && key.equals(argOption.longKey)) {
-            throw new ParseArgumentException("A long key has been passed with only one dash this effects argument formatting. Please add a dash.\n"
+            throw new ParseArgumentException("A long key has been passed with only one dash this effects argument formatting.\n"
+                    + "Please add a dash.\n"
                     + "Key: " + key + ".\n"
                     + "Input: " + Arrays.toString(rawInputs));
         } else if (isLongKey && key.charAt(0) == argOption.shortKey) {
-            throw new ParseArgumentException("A short key has been passed with two dash this effects argument formatting. Please remove the extra dash.\n"
+            throw new ParseArgumentException("A short key has been passed with two dash this effects argument formatting.\n"
+                    + "Please remove the extra dash.\n"
                     + "Key: " + key + ".\n"
                     + "Input: " + Arrays.toString(rawInputs));
         }
@@ -268,9 +270,24 @@ public class ArgsParser {
                     + "New Key: " + key + ".\n"
                     + "Input: " + input + ".");
         }
-        expectingKey = false;
 
-        if (!argReceived.getValue().isEmpty() && argOption.repeated)
+        if (!argReceived.getValues().isEmpty() && !argOption.isRepeatable()) {
+            String errorStart = "An argument has been used multiply times that should only be used once.\n";
+            String errorMid = "";
+            String errorEnd = "Short Key: '" + argOption.getShortKey() + "', Long Key: \"" + argOption.getLongKey() + "\".\n"
+                    + "Input: " + Arrays.toString(rawInputs);
+
+            if (argOption.getUsage() == E_Usage.KEY_VALUE) {
+                String shortError = "First Usage Value: " + argReceived.getValue() + ".\n";
+                String longError = "Second Usage: " + input + "First Usage Value: " + argReceived.getValue() + ".\n";
+
+                errorMid = (isLongKey) ? longError : shortError;
+            }
+
+            throw new ParseArgumentException(errorStart + errorMid + errorEnd);
+        }
+
+        expectingKey = false;
 
         switch (argOption.getUsage()) {
             case KEY:
@@ -280,6 +297,7 @@ public class ArgsParser {
                     checkShortKeyKeyErrors(splitInput, argOption);
                 }
                 updateResultMaps(argReceived);
+                argReceived.addValue("");
                 expectingKey = true;
                 lastKeyPair = argReceived;
                 currentKeyPair = null;
@@ -289,7 +307,7 @@ public class ArgsParser {
                 if (isLongKey) {
                     checkLongKeyKeyValueErrors(splitInput, argOption);
                     updateResultMaps(argReceived);
-                    argReceived.value = splitInput[1];
+                    argReceived.addValue(splitInput[1]);
                     expectingKey = true;
                     lastKeyPair = argReceived;
                     currentKeyPair = null;
@@ -376,12 +394,12 @@ public class ArgsParser {
         // Note(Max): Once the first argument assigned to `listArg` is passed the all subsequent values should be a part
         // of the listArg value.
         if (listArg != null && listArg == currentKeyPair) {
-            listArg.value += " " + value;
+            listArg.addValue(value);
             expectingKey = false;
             return;
         }
 
-        currentKeyPair.value = value;
+        currentKeyPair.addValue(value);
         lastKeyPair = currentKeyPair;
         currentKeyPair = null;
         expectingKey = true;
@@ -518,11 +536,10 @@ public class ArgsParser {
          */
         private boolean useOnItsOwn = false;
 
-        @SuppressWarnings({"unused", "FieldMayBeFinal"})
-        private E_Types typeSig = null;
+        private boolean repeatable = false;
 
         @SuppressWarnings({"unused", "FieldMayBeFinal"})
-        private boolean repeated = false;
+        private E_Types typeSig = null;
 
 
 
@@ -628,17 +645,28 @@ public class ArgsParser {
             return this;
         }
 
+        public boolean isRepeatable() {
+            return repeatable;
+        }
+
+        public ArgOption setRepeatable(boolean repeatable) {
+            this.repeatable = repeatable;
+            return this;
+        }
+
+
+
         @Override
         public String toString() {
             return "ArgOption{" +
-                    "shortKey=" + shortKey +
-                    ", longKey='" + longKey + '\'' +
-                    ", usage=" + usage +
-                    ", shortValueExample='" + shortValueExample + '\'' +
-                    ", longKeyValueExample='" + longKeyValueExample + '\'' +
-                    ", listExample='" + listExample + '\'' +
-                    ", description='" + description + '\'' +
-                    '}';
+                    "shortKey='" + shortKey + "', " +
+                    "longKey=\"" + longKey + "\", " +
+                    "usage=" + usage + ", " +
+                    "shortValueExample=\"" + shortValueExample + "\", " +
+                    "longKeyValueExample=\"" + longKeyValueExample + "\", " +
+                    "listExample=\"" + listExample + "\", " +
+                    "description=\"" + description + "\"" +
+                    "}";
         }
     }
 
@@ -646,7 +674,7 @@ public class ArgsParser {
 
         private final ArgOption option;
 
-        private String value = "";
+        private final ArrayList<String> values = new ArrayList<>();
 
 
 
@@ -656,24 +684,35 @@ public class ArgsParser {
 
 
 
+        private void addValue(String value) {
+            values.add(value);
+        }
+
+
+
         public ArgOption getOption() {
             return option;
         }
 
-        public String getValue() {
-            return value;
+        /**
+         * @return A list of length n, where n is the number of times the argument has been used. If the argument is a
+         * key type then the string will be empty.
+         */
+        public ArrayList<String> getValues() {
+            return values;
         }
 
-        public void setValue(String value) {
-            this.value = value;
+        /**
+         * @return The string passed to the first use of this argument if it is a key-value pair, an empty string if it
+         * was a key that was used or null if the argument has not been used.
+         */
+        public String getValue() {
+            return (values.isEmpty()) ? null : values.get(0);
         }
 
         @Override
         public String toString() {
-            return "ArgReceived{" +
-                    "Option=" + option +
-                    ", Value='" + value + '\'' +
-                    '}';
+            return "ArgReceived{Values=\"" + values + "\", Option=" + option + "}";
         }
 
     }
