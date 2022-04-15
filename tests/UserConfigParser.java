@@ -2,7 +2,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class UserConfigParser {
 
@@ -37,14 +38,52 @@ class UserConfigParser {
         };
     }
 
+    enum ShortLongKey implements ArgsParser.EnumOptions {
+        FAIL(new ArgsParser.ArgOption().setLongKey("A").setUsage(ArgsParser.E_Usage.KEY));
+
+        ArgsParser.ArgOption option;
+        ShortLongKey(ArgsParser.ArgOption option) {
+            this.option = option;
+        }
+
+        @Override
+        public ArgsParser.ArgOption get() {
+            return option;
+        }
+    }
+
 
 
     @Test
     void constructor_fail_if_programme_details_null() {
-        assertThrows(Exception.class,
-                () -> new ArgsParser(null, (ArgsParser.ArgOption[]) null));
-        assertThrows(Exception.class,
-                () -> new ArgsParser(new ArgsParser.ProgrammeDetails(), (ArgsParser.ArgOption[]) null));
+        assertThrows(
+                NullPointerException.class,
+                () -> new ArgsParser(null, (ArgsParser.ArgOption[]) null)
+        );
+
+        assertThrows(
+                NullPointerException.class,
+                () -> new ArgsParser(new ArgsParser.ProgrammeDetails(), (ArgsParser.ArgOption[]) null)
+        );
+    }
+
+    @Test
+    void fail_if_programme_name_is_empty() {
+        assertThrows(
+                ArgsParser.ArgumentOptionException.class,
+                () -> new ArgsParser(
+                        new ArgsParser.ProgrammeDetails().setProgrammeName(null),
+                        new ArrayList<>()
+                )
+        );
+
+        assertThrows(
+                ArgsParser.ArgumentOptionException.class,
+                () -> new ArgsParser(
+                        new ArgsParser.ProgrammeDetails().setProgrammeName(""),
+                        new ArrayList<>()
+                )
+        );
     }
 
     @Test
@@ -83,14 +122,17 @@ class UserConfigParser {
 
     @Test
     void constructor_fail_one_char_long_key() {
-        ArgsParser.ArgOption[] options = new ArgsParser.ArgOption[] {
-                new ArgsParser.ArgOption().setShortKey('a').setLongKey("A").setUsage(ArgsParser.E_Usage.KEY)
-        };
+        assertThrows(
+                ArgsParser.ArgumentOptionException.class,
+                () -> new ArgsParser.ArgOption().setShortKey('a').setLongKey("A").setUsage(ArgsParser.E_Usage.KEY)
+        );
 
-        ArgsParser.ArgumentOptionException exception = assertThrows(ArgsParser.ArgumentOptionException.class,
-                () -> new ArgsParser(makeProgrammeDetails(), options));
+        ExceptionInInitializerError e = assertThrows(
+                ExceptionInInitializerError.class,
+                () -> new ArgsParser(makeProgrammeDetails(), ShortLongKey.class)
+        );
 
-        System.out.println(exception.toString());
+        assertSame(e.getCause().getClass(), ArgsParser.ArgumentOptionException.class);
     }
 
     @Test
