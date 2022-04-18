@@ -15,6 +15,7 @@ enum EnumArgOptions implements ArgsParser.EnumOptions {
             .setDescription("This command sets the text colour if the console using an RGB 0-255 triplet.")),
 
     RESET(new ArgsParser.ArgOption()
+            .setShortKey('r')
             .setLongKey("Use-Defaults")
             .setUsage(ArgsParser.E_Usage.KEY)
             .setDescription("This command tells the console revert to its default colour scheme. This should be used on its own.")),

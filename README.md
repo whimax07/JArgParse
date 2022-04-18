@@ -8,7 +8,7 @@ A command line, argument parser that can be included with just one file, [ArgsPa
  - Finish the tests.
  - Add details of what it can and cannot do.
  - Add multiple use of the same flag to help. 
- - Add a option on ArgParse to not include stack traces from arg parse exceptions.
+ - Add an option on ArgParse to not include stack traces from arg parse exceptions.
 
 ### Known bugs or quarks.
  - A list argument cannot start with a value starting with a "-".
