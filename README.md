@@ -7,8 +7,8 @@ A command line, argument parser that can be included with just one file, [ArgsPa
 ### Things to finish or add.
  - Finish the tests.
  - Add details of what it can and cannot do.
- - Add support for quote marks to allow spaces.
- - Multiple use of the same flag. Mainly needs work on the help text. 
+ - Add multiple use of the same flag to help. 
+ - Add a option on ArgParse to not include stack traces from arg parse exceptions.
 
 ### Known bugs or quarks.
  - A list argument cannot start with a value starting with a "-".
