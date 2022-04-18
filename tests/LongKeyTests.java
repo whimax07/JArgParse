@@ -2,7 +2,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class LongKeyTest {
+public class LongKeyTests {
 
     ArgsParser.ProgrammeDetails makeProgrammeDetails() {
         return new ArgsParser.ProgrammeDetails().setCommandName("ColColorize");

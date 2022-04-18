@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class MixedInputTest {
+public class MixedInputTests {
 
     ArgsParser.ProgrammeDetails makeProgrammeDetails() {
         return new ArgsParser.ProgrammeDetails().setCommandName("ColColorize");
