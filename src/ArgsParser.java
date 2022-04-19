@@ -400,6 +400,7 @@ public class ArgsParser {
             return;
         }
 
+        updateResultMaps(currentKeyPair);
         currentKeyPair.addValue(value);
         lastKeyPair = currentKeyPair;
         currentKeyPair = null;

@@ -49,19 +49,40 @@ public class ShortKeyTests {
 
     @Test
     void pass_confirm_key_value_pair_passed() {
-        fail();
+        ArgsParser argsParser = new ArgsParser(makeProgrammeDetails(), EnumArgOptions.class);
+        String[] input = new String[] {"-b", "abc"};
+        argsParser.pareArgs(input);
+
+        assertTrue(argsParser.isPassed(EnumArgOptions.BACKGROUND));
+        assertTrue(argsParser.isPassed("Set-Background"));
+        assertTrue(argsParser.isPassed("b"));
+        assertTrue(argsParser.isLongPassed("Set-Background"));
+        assertTrue(argsParser.isShortPassed('b'));
+        assertNotNull(argsParser.getArgument(EnumArgOptions.BACKGROUND));
+        assertNotNull(argsParser.getArgument("Set-Background"));
+        assertNotNull(argsParser.getArgument("b"));
     }
 
     /**
      * See {@link MixedInputTests#pass_multiple_same_input_arguments_allowed()}.
      */
     @Test
-    void pass_get_input_from_key_value_pair() {
-    }
+    void pass_get_input_from_key_value_pair() { }
 
     @Test
     void pass_confirm_key_value_not_passed() {
-        fail();
+        ArgsParser argsParser = new ArgsParser(makeProgrammeDetails(), EnumArgOptions.class);
+        String[] input = new String[] {"-t", "Black"};
+        argsParser.pareArgs(input);
+
+        assertFalse(argsParser.isPassed(EnumArgOptions.BACKGROUND));
+        assertFalse(argsParser.isPassed("Set-Background"));
+        assertFalse(argsParser.isPassed("b"));
+        assertFalse(argsParser.isLongPassed("Set-Background"));
+        assertFalse(argsParser.isShortPassed('b'));
+        assertNull(argsParser.getArgument(EnumArgOptions.BACKGROUND));
+        assertNull(argsParser.getArgument("Set-Background"));
+        assertNull(argsParser.getArgument("b"));
     }
 
 
@@ -71,7 +92,9 @@ public class ShortKeyTests {
     // ===============================
     @Test
     void pass_pass_key_to_key() {
-        fail();
+        ArgsParser argsParser = new ArgsParser(makeProgrammeDetails(), EnumArgOptions.class);
+        String[] input = new String[] {"-r"};
+        assertDoesNotThrow(() -> argsParser.pareArgs(input));
     }
 
     @Test
@@ -91,13 +114,30 @@ public class ShortKeyTests {
     }
 
     @Test
-    void pass_confirm_key_not_passed() {
-        fail();
+    void pass_get_key_passed() {
+        ArgsParser argsParser = new ArgsParser(makeProgrammeDetails(), EnumArgOptions.class);
+        String[] input = new String[] {"-r"};
+        argsParser.pareArgs(input);
+
+        String passValue = argsParser.getArgument(EnumArgOptions.RESET).getValue();
+        assertNotNull(passValue);
+        assertTrue(passValue.isEmpty());
     }
 
     @Test
-    void pass_get_input_from_key() {
-        fail();
+    void pass_confirm_key_not_passed() {
+        ArgsParser argsParser = new ArgsParser(makeProgrammeDetails(), EnumArgOptions.class);
+        String[] input = new String[] {"--Set-Text=Hi"};
+        argsParser.pareArgs(input);
+
+        assertFalse(argsParser.isPassed(EnumArgOptions.RESET));
+        assertFalse(argsParser.isPassed("Use-Defaults"));
+        assertFalse(argsParser.isPassed("r"));
+        assertFalse(argsParser.isLongPassed("Use-Defaults"));
+        assertFalse(argsParser.isShortPassed('r'));
+        assertNull(argsParser.getArgument(EnumArgOptions.RESET));
+        assertNull(argsParser.getArgument("Use-Defaults"));
+        assertNull(argsParser.getArgument("r"));
     }
 
 
@@ -110,16 +150,6 @@ public class ShortKeyTests {
         ArgsParser argsParser = new ArgsParser(makeProgrammeDetails(), EnumArgOptions.class);
         String[] input = new String[] {"-t", "Hi", "-t", "Yo"};
         assertThrows(ArgsParser.ParseArgumentException.class, () -> argsParser.pareArgs(input));
-    }
-
-    @Test
-    void pass_pass_the_same_key_more_than_once_allowing_that() {
-        fail();
-    }
-
-    @Test
-    void pass_get_values_for_multi_pass() {
-        fail();
     }
 
 }

@@ -39,6 +39,14 @@ public class MixedInputTests {
     }
 
     @Test
+    void fail_key_passed_key_value() {
+        ArgsParser argsParser = new ArgsParser(makeProgrammeDetails(), EnumArgOptions.class);
+        // Need to pass set text so it errors. If you don't it just looks like a list arg. Probably why they are bad.
+        String[] input = new String[] {"--Use-Defaults", "reset_all", "--Set-Text=(0,0,0)"};
+        assertThrows(ArgsParser.ParseArgumentException.class, () -> argsParser.pareArgs(input));
+    }
+
+    @Test
     void pass_multiple_same_input_arguments_allowed() {
         ArgsParser argsParser = new ArgsParser(
                 new ArgsParser.ProgrammeDetails().setCommandName("Test_Prog"),

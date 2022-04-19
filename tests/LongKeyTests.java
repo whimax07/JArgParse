@@ -45,6 +45,7 @@ public class LongKeyTests {
 
         assertTrue(argsParser.isPassed(EnumArgOptions.TEXT));
         assertTrue(argsParser.isPassed("Set-Text"));
+        assertTrue(argsParser.isPassed("t"));
         assertTrue(argsParser.isLongPassed("Set-Text"));
         assertTrue(argsParser.isShortPassed('t'));
         assertNotNull(argsParser.getArgument(EnumArgOptions.TEXT));
@@ -93,6 +94,7 @@ public class LongKeyTests {
 
         assertTrue(argsParser.isPassed(EnumArgOptions.RESET));
         assertTrue(argsParser.isPassed("Use-Defaults"));
+        assertTrue(argsParser.isPassed("r"));
         assertTrue(argsParser.isLongPassed("Use-Defaults"));
         assertTrue(argsParser.isShortPassed('r'));
         assertNotNull(argsParser.getArgument(EnumArgOptions.RESET));
@@ -119,6 +121,7 @@ public class LongKeyTests {
 
         assertFalse(argsParser.isPassed(EnumArgOptions.TEXT));
         assertFalse(argsParser.isPassed("Set-Text"));
+        assertFalse(argsParser.isPassed("t"));
         assertFalse(argsParser.isLongPassed("Set-Text"));
         assertFalse(argsParser.isShortPassed('t'));
         assertNull(argsParser.getArgument(EnumArgOptions.TEXT));
@@ -135,14 +138,6 @@ public class LongKeyTests {
     void fail_pass_the_same_key_more_than_once_without_allowing() {
         ArgsParser argsParser = new ArgsParser(makeProgrammeDetails(), EnumArgOptions.class);
         String[] input = new String[] {"--Set-Text=Hi", "--Set-Text=Yo"};
-        assertThrows(ArgsParser.ParseArgumentException.class, () -> argsParser.pareArgs(input));
-    }
-
-    @Test
-    void fail_key_passed_key_value() {
-        ArgsParser argsParser = new ArgsParser(makeProgrammeDetails(), EnumArgOptions.class);
-        // Need to pass set text so it errors. If you don't it just looks like a list arg. Probably why they are bad.
-        String[] input = new String[] {"--Use-Defaults", "reset_all", "--Set-Text=(0,0,0)"};
         assertThrows(ArgsParser.ParseArgumentException.class, () -> argsParser.pareArgs(input));
     }
 
