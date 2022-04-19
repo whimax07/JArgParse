@@ -234,6 +234,7 @@ public class ArgsParser {
         // This must be the first positional arg.
         listArg.addValue(rawInput);
         currentKeyPair = listArg;
+        expectingKey = false;
     }
 
     private void parseKey(String input, boolean isLongKey) {
