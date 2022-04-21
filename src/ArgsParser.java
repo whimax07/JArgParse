@@ -41,10 +41,12 @@ public class ArgsParser {
 
     /**
      * Make an enum that implements EnumOptions and has a field that contains an ArgOption. Then call {@code
-     * ArgParser(programmeDetails, EnumArgOptions.class);} <br><br>
+     * ArgParser argParser = ArgParser(programmeDetails, EnumArgOptions.class);} <br><br>
      *
-     * Why? Because then you can index into the results of the parse with the enum. <br>
+     * Why? Because then you can index into the results of the parse with the enum, for example {@code
+     * argParser.isPassed(EnumArgOptions.OPTION1);} <br><br>
      *
+     * Enum:
      * <pre> {@code
      * enum EnumArgOptions implements EnumOptions {
      *     OPTION1 (new ArgOption(...)),
