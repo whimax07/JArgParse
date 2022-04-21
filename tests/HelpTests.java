@@ -35,6 +35,27 @@ public class HelpTests {
             "                                       the command.\n" +
             "                                       Example: ColColourize ... {value} {value} {value}";
 
+
+
+    ArgsParser.ProgrammeDetails makeProgrammeDetails() {
+        return new ArgsParser.ProgrammeDetails().setCommandName("ColColorize");
+    }
+
+
+
+    @Test
+    void check_help_for_set_console_colour_test_example() {
+        ArgsParser argsParser = new ArgsParser(makeProgrammeDetails(), HelpEnumExample.class);
+        String helpText = argsParser.getHelpText();
+        System.out.println(helpText);
+
+        int lineNumber = 0;
+        String a = "";
+        String b = "b";
+        assertEquals(a, b, "\nFirst mismatch accrued on line " + lineNumber + ".");
+        fail();
+    }
+
     private enum HelpEnumExample implements ArgsParser.EnumOptions {
 
         BACKGROUND(new ArgsParser.ArgOption()
@@ -70,17 +91,6 @@ public class HelpTests {
             return option;
         }
 
-    }
-
-
-
-    @Test
-    void check_help_for_set_console_colour_test_example() {
-        int lineNumber = 0;
-        String a = "";
-        String b = "b";
-        assertEquals(a, b, "\nFirst mismatch accrued on line " + lineNumber + ".");
-        fail();
     }
 
 }
