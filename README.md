@@ -10,6 +10,7 @@ A command line, argument parser that can be included with just one file, [ArgsPa
  - Add multiple use of the same flag to help. 
  - Add an option on ArgParse to not include stack traces from arg parse exceptions.
  - Finish adding doc string to the public API.
+ - A catch for the windows style help flags aka /? and /h.
 
 ### Known bugs or quarks.
  - A list argument cannot start with a value starting with a "-".
