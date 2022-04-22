@@ -1045,6 +1045,14 @@ public class ArgsParser {
                 case LIST: usage = LIST_USAGE.replaceAll(".$", ""); break;
             }
 
+            if (option.isRepeatable()) {
+                usage += ", Repeatable";
+            }
+
+            if (option.isUseOnItsOwn()) {
+                usage += ", Exclusive";
+            }
+
             return lineWrapString("Usage: " + usage + ".", infoWidth);
         }
 

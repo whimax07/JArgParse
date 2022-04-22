@@ -26,7 +26,7 @@ By Max Whitehouse, version 1.0.0.
 
   -b, --Set-Background                  This command sets the background colour of the console using
                                         an RGB 0-255 triplet.
-                                        Usage: Key-value pair.
+                                        Usage: Key-value pair, Repeatable.
                                         Example: ColColorize ... -b (0,0,0) ...
                                         Example: ColColorize ... --Set-Background=(0,0,0) ...
 
@@ -38,7 +38,7 @@ By Max Whitehouse, version 1.0.0.
 									   
       --Use-Defaults                    This command tells the console revert to its default colour
                                         scheme. This should be used on its own.
-                                        Usage: Key.
+                                        Usage: Key, Exclusive.
                                         Example: ColColorize --Use-Defaults
 									   
 									   

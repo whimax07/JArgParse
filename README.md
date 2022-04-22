@@ -4,10 +4,8 @@ A command line, argument parser that can be included with just one file, [ArgsPa
 
 ### What it can do.
 
-### Things to finish or add. 
- - Finish the tests.
+### Things to finish or add.
  - Add details of what it can and cannot do.
- - Add multiple use of the same flag to help. 
  - Add an option on ArgParse to not include stack traces from arg parse exceptions.
  - Finish adding doc string to the public API.
  - A catch for the windows style help flags aka /? and /h.

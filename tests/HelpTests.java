@@ -16,7 +16,7 @@ public class HelpTests {
             "\n" +
             "  -b, --Set-Background                  This command sets the background colour of the console using\n" +
             "                                        an RGB 0-255 triplet.\n" +
-            "                                        Usage: Key-value pair.\n" +
+            "                                        Usage: Key-value pair, Repeatable.\n" +
             "                                        Example: ColColorize ... -b (0,0,0) ...\n" +
             "                                        Example: ColColorize ... --Set-Background=(0,0,0) ...\n" +
             "\n" +
@@ -28,7 +28,7 @@ public class HelpTests {
             "\n" +
             "      --Use-Defaults                    This command tells the console revert to its default colour\n" +
             "                                        scheme. This should be used on its own.\n" +
-            "                                        Usage: Key.\n" +
+            "                                        Usage: Key, Exclusive.\n" +
             "                                        Example: ColColorize --Use-Defaults\n" +
             "\n" +
             "\n" +
@@ -55,6 +55,7 @@ public class HelpTests {
     void check_help_for_set_console_colour_test_example() {
         ArgsParser argsParser = new ArgsParser(makeProgrammeDetails(), HelpEnumExample.class);
         String helpText = argsParser.getHelpText();
+        System.out.println("Help text: \n" + helpText);
 
         String[] splitTarget = TARGET_HELP.split("\\r?\\n");
         String[] splitMade = helpText.split("\\r?\\n");
@@ -74,6 +75,7 @@ public class HelpTests {
                 .setShortKey('b')
                 .setLongKey("Set-Background")
                 .setUsage(ArgsParser.E_Usage.KEY_VALUE)
+                .setRepeatable(true)
                 .setDescription("This command sets the background colour of the console using an RGB 0-255 triplet.")
                 .setShortValueExample("(0,0,0)")
                 .setLongKeyValueExample("(0,0,0)")
