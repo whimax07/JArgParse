@@ -595,7 +595,6 @@ public class ArgsParser {
             return this;
         }
 
-
         public E_Usage getUsage() {
             return usage;
         }
@@ -646,7 +645,7 @@ public class ArgsParser {
         }
 
         /**
-         * Set this as true and if the key is passed it should be the only key. Like '--help'.
+         * Set this as true and if the key is passed it should be the only key. For example '--help'.
          * <br>
          * Default: false.
          */

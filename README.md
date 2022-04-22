@@ -1,5 +1,5 @@
 # JArgParse
-A command line, argument parser that can be included with just one file, [ArgsParser.java](src/ArgsParser.java). See [main.md](docs/main.md) for examples. 
+A command line, argument parser that can be included with just one file, [ArgsParser.java](src/ArgsParser.java). See [main.md](docs/main.md) for examples. Usable with Java 8 and newer.
 
 
 ### What it can do.
