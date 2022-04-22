@@ -1,47 +1,49 @@
 
+Measurements are inclusive as I am counting how many charter I am placing so a line of 100 charters ends at the start of
+charter 101. Therefore, to allow 40 charters of space from the keys, the info bits should start at charter 41.
 
 |1                               |35  |40  |45            |60                                     |100
-  -l, --This-Is-A-Pretty-Long-Tag      This is the start of the is long
+  -l, --This-Is-A-Pretty-Long-Tag       This is the start of the is long
 
 
-  -m, --A-Medium-Length                This is a medium length tag.
+  -m, --A-Medium-Length                 This is a medium length tag.
   
   
-  -s                                   A short tag switch
+  -s                                    A short tag switch
   
   
   
   
   
-===================================================================================================
-======================================= Set Console Colours =======================================
-===================================================================================================
+====================================================================================================
+======================================= Set Console Colours ========================================
+====================================================================================================
 This program set the colours used by this console. 
 By Max Whitehouse, version 1.0.0.
 
-  -b, --Set-Background                 This command sets the background colour of the console using 
-                                       an RGB 0-255 triplet.
-                                       Usage: Key-value pair.
-                                       Example: ColColorize ... -b (0,0,0) ...
-                                       Example: ColColorize ... -Set-Background=(0,0,0) ...
+  -b, --Set-Background                  This command sets the background colour of the console using
+                                        an RGB 0-255 triplet.
+                                        Usage: Key-value pair.
+                                        Example: ColColorize ... -b (0,0,0) ...
+                                        Example: ColColorize ... -Set-Background=(0,0,0) ...
 
-  -t, --Set-Text                       This command sets the text colour if the console using an RGB
-                                       0-255 triplet.
-                                       Usage: Key-value pair.
-                                       Example: ColColorize ... -t {value} ...
-                                       Example: ColColorize ... -Set-Text={value} ...
+  -t, --Set-Text                        This command sets the text colour if the console using an RGB
+                                        0-255 triplet.
+                                        Usage: Key-value pair.
+                                        Example: ColColorize ... -t {value} ...
+                                        Example: ColColorize ... -Set-Text={value} ...
 									   
-  --Use-Defaults                       This command tells the console revert to it's default colour 
-                                       scheme. This should be used on it's own.
-                                       Usage: Key.
-                                       Example: ColColourize --Use-Defaults
+  --Use-Defaults                        This command tells the console revert to it's default colour
+                                        scheme. This should be used on it's own.
+                                        Usage: Key.
+                                        Example: ColColourize --Use-Defaults
 									   
 									   
-  [SPACE DELIMITED LIST]               This will take the path to json files and read a "Set 
-                                       Console Colours" configuration file.
-                                       Usage: List, a space delimited list of values at the end of 
-                                       the command.
-                                       Example: ColColourize ... {value} {value} {value}
+  [SPACE DELIMITED LIST]                This will take the path to json files and read a "Set
+                                        Console Colours" configuration file.
+                                        Usage: List, a space delimited list of values at the end of
+                                        the command.
+                                        Example: ColColourize ... {value} {value} {value}
 									   
 	
 
