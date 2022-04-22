@@ -536,7 +536,7 @@ public class ArgsParser {
         private String description = "";
 
         /**
-         * Whether or not this argument is supposed to be used without any other arguments. I.E. '--help'.
+         * Set this to true if the option is supposed to be used without any other arguments. I.E. '--help'.
          */
         private boolean useOnItsOwn = false;
 
@@ -841,8 +841,8 @@ public class ArgsParser {
             for (int i = 0; i < nameLines.size(); i++) {
                 String line = nameLines.get(i);
 
-                int rightSpace = (LINE_WIDTH - line.length()) / 2;
-                int leftSpace = LINE_WIDTH - rightSpace;
+                int leftSpace = (LINE_WIDTH - line.length()) / 2;
+                int rightSpace = LINE_WIDTH - (leftSpace + line.length());
 
                 String newLine = dupeString("=", leftSpace - 1) + " " + line
                         + " " + dupeString("=", rightSpace - 1);
@@ -888,8 +888,23 @@ public class ArgsParser {
         }
 
         private void buildOptionHelpBlocks() {
+            // Note(Max): Have a temp variable so access to the parents classes private members isn't needed.
+            // We pull listOption out so that we can make sure it is the last option printed in the help and has one
+            // more new line.
+            ArgOption listOption = null;
+
             for (ArgOption option : argOptions) {
+                if (option.usage == E_Usage.LIST) {
+                    listOption = option;
+                    continue;
+                }
+
                 buildOptionBlock(option);
+            }
+
+            if (listOption != null) {
+                stringBuilder.append("\n");
+                buildOptionBlock(listOption);
             }
         }
 
@@ -917,17 +932,22 @@ public class ArgsParser {
 
         private String buildShortKeyString(char shortKey) {
             if (shortKey == '\0') {
-                return dupeString(" ", LEFT_MARGIN_WIDTH + "-x, ".length());
+                int keyWidth = "-x, ".length();
+                return dupeString(" ", LEFT_MARGIN_WIDTH + keyWidth);
             }
 
             return dupeString(" ", LEFT_MARGIN_WIDTH) + "-" + shortKey + ", ";
         }
 
         private String buildLongKeyString(String longKey, String keyLine) {
+            // Note(Max): Reassigning to keyLine looks like it might be wrong.
             int spaceForLongKey = (BASE_NAME_COL_WIDTH + EXTRA_NAME_SPACE) - (keyLine.length());
 
             if ("--".length() + longKey.length() + KEY_DESCRIPTION_GAP > spaceForLongKey) {
-                throw new ArgumentOptionException("Long key to long. Long key: " + longKey);
+                int maxLongKeyLength = spaceForLongKey - (2 + KEY_DESCRIPTION_GAP);
+                throw new ArgumentOptionException("Long key is too long for the help block.\n" +
+                        "With the current setting the charter limit for a long key is " + maxLongKeyLength + ".\n" +
+                        "Long key: " + longKey);
             }
 
             keyLine += "--" + longKey + dupeString(" ", KEY_DESCRIPTION_GAP);
@@ -959,11 +979,7 @@ public class ArgsParser {
         }
 
         private int calcInfoWidth(String keyLine) {
-            int indentWidth = keyLine.length();
-
-            if (indentWidth < BASE_NAME_COL_WIDTH) {
-                indentWidth = BASE_NAME_COL_WIDTH;
-            }
+            int indentWidth = Math.max(keyLine.length(), BASE_NAME_COL_WIDTH);
 
             return LINE_WIDTH - indentWidth;
         }
@@ -981,18 +997,23 @@ public class ArgsParser {
             switch (option.usage) {
                 case KEY: usage = "Key"; break;
                 case KEY_VALUE: usage = "Key-value pair"; break;
-                case LIST: usage = LIST_USAGE; break;
+                case LIST: usage = LIST_USAGE.replaceAll(".$", ""); break;
             }
 
-            return lineWrapString("Usage: " + usage, infoWidth);
+            return lineWrapString("Usage: " + usage + ".", infoWidth);
         }
 
         private ArrayList<String> buildExamples(ArgOption option) {
-            if (option.usage == E_Usage.LIST) {
-                return buildListExample(option);
+            ArrayList<String> out = null;
+
+            switch (option.usage) {
+                case KEY:
+                case KEY_VALUE:
+                    out = buildValueExamples(option); break;
+                case LIST: out = buildListExample(option); break;
             }
 
-            return buildValueExamples(option);
+            return out;
         }
 
         private ArrayList<String> buildListExample(ArgOption option) {
@@ -1008,15 +1029,19 @@ public class ArgsParser {
             String ellipses = (option.useOnItsOwn) ? " " : " ... ";
 
             if (option.shortKey != '\0') {
-                String shortExample = EXAMPLE_PREFIX + commandName + ellipses + "-" + option.getShortKey() + " "
-                        + option.getShortValueExample() + ellipses;
+                String valueExample = (option.usage == E_Usage.KEY) ? "" : " " + option.getShortValueExample();
+
+                String shortExample = EXAMPLE_PREFIX + commandName + ellipses + "-" + option.getShortKey()
+                        + valueExample + ellipses;
 
                 exampleLines.addAll(lineWrapString(shortExample, infoWidth));
             }
 
             if (!option.longKey.isEmpty()) {
-                String longExample = EXAMPLE_PREFIX + commandName + ellipses + "--" + option.getLongKey() + "="
-                        + option.getLongKeyValueExample() + ellipses;
+                String valueExample = (option.usage == E_Usage.KEY) ? "" : "=" + option.getLongKeyValueExample();
+
+                String longExample = EXAMPLE_PREFIX + commandName + ellipses + "--" + option.getLongKey()
+                        + valueExample + ellipses;
 
                 exampleLines.addAll(lineWrapString(longExample, infoWidth));
             }
@@ -1026,13 +1051,13 @@ public class ArgsParser {
 
         private void mergeAndIndent(String keyLine, ArrayList<String> infoLines) {
             if (infoLines.size() >= 1) {
-                // The key text is already packed.
-                infoLines.set(0, keyLine + infoLines.get(0));
+                String padding = dupeString(" ", LINE_WIDTH - (infoWidth + keyLine.length()));
+                infoLines.set(0, keyLine + padding + infoLines.get(0));
             }
 
             for (int i = 1; i < infoLines.size(); i++) {
-                String newLine = dupeString(" ", keyLine.length()) + infoLines.get(i);
-                infoLines.set(0, newLine);
+                String newLine = dupeString(" ", LINE_WIDTH - infoWidth) + infoLines.get(i);
+                infoLines.set(i, newLine);
             }
         }
 
@@ -1046,17 +1071,19 @@ public class ArgsParser {
             int lineLength = 0;
 
             for (String word : inputWords) {
-                if (lineLength + word.length() < lineWidth) {
-                    lineBuilder.append(" ").append(word);
+                if (lineLength + word.length() <= lineWidth) {
+                    lineBuilder.append(word).append(" ");
                     lineLength += 1 + word.length();
                     continue;
                 }
 
-                wrappedLines.add(lineBuilder.toString());
+                wrappedLines.add(lineBuilder.toString().trim());
                 lineLength = word.length();
                 lineBuilder = new StringBuilder(lineWidth);
+                lineBuilder.append(word).append(" ");
             }
 
+            wrappedLines.add(lineBuilder.toString().trim());
             return wrappedLines;
         }
 
