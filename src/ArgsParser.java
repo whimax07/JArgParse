@@ -28,8 +28,6 @@ public class ArgsParser {
 
     private ArgReceived listArg = null;
 
-    private final ArrayList<String> stringsToCatch = new ArrayList<>();
-
     private final HashMap<ArgOption, ArgReceived> optionResultMap = new HashMap<>();
 
     private final HashMap<Character, ArgReceived> shortMap = new HashMap<>();
@@ -41,6 +39,7 @@ public class ArgsParser {
     private ArgReceived lastKeyPair;
 
     private boolean expectingKey = false;
+
 
 
     /**
