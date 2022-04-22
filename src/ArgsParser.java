@@ -21,10 +21,14 @@ public class ArgsParser {
 
     private final String help;
 
+    private static final String[] HELP_FLAGS = new String[] {"-h", "--help", "--Help"};
+
     // Input things.
     private String[] rawInputs;
 
     private ArgReceived listArg = null;
+
+    private final ArrayList<String> stringsToCatch = new ArrayList<>();
 
     private final HashMap<ArgOption, ArgReceived> optionResultMap = new HashMap<>();
 
@@ -178,10 +182,13 @@ public class ArgsParser {
     }
 
     private void checkForHelpRequest() {
+        // Note(Max): I still prefer this over streams.
         for (String input : rawInputs) {
-            if (input.equals("-h") || input.equals("--help") || input.equals("--Help")) {
-                System.out.println(help);
-                exit(0);
+            for (String helpFlag : HELP_FLAGS) {
+                if (input.equals(helpFlag)) {
+                    System.out.println(help);
+                    exit(0);
+                }
             }
         }
     }
@@ -807,6 +814,8 @@ public class ArgsParser {
 
         private static final int KEY_DESCRIPTION_GAP = 3;
 
+        private static final String HELP_FLAG_DESCRIPTION = "Use to print this help.";
+
         private static final String LIST_USAGE_KEY = "[SPACE DELIMITED LIST]";
 
         private static final String LIST_USAGE = "List, a space delimited list of values at the end of the command.";
@@ -888,6 +897,10 @@ public class ArgsParser {
         }
 
         private void buildOptionHelpBlocks() {
+            // The fist option to be printed is help.
+
+            handBuildHelpOptionBlock();
+
             // Note(Max): Have a temp variable so access to the parents classes private members isn't needed.
             // We pull listOption out so that we can make sure it is the last option printed in the help and has one
             // more new line.
@@ -906,6 +919,37 @@ public class ArgsParser {
                 stringBuilder.append("\n");
                 buildOptionBlock(listOption);
             }
+        }
+
+        private void handBuildHelpOptionBlock() {
+            stringBuilder.append("\n");
+
+            StringBuilder keyList = new StringBuilder();
+
+            for (String helpFlag : HELP_FLAGS) {
+                keyList.append(helpFlag).append(", ");
+            }
+
+            keyList.delete(keyList.length() - 2, keyList.length() - 1);
+            String keyLine = dupeString(" ", LEFT_MARGIN_WIDTH) + keyList;
+
+
+            infoWidth = calcInfoWidth(keyLine);
+            ArrayList<String> description = lineWrapString(HELP_FLAG_DESCRIPTION, infoWidth);
+
+            ArrayList<String> example = lineWrapString(
+                    EXAMPLE_PREFIX + programmeDetails.commandName + " " + HELP_FLAGS[0],
+                    infoWidth
+            );
+
+            ArrayList<String> infoLines = new ArrayList<>();
+            infoLines.addAll(description);
+            infoLines.addAll(example);
+
+
+            mergeAndIndent(keyLine, infoLines);
+
+            addLinesToHelpText(infoLines);
         }
 
         private void buildOptionBlock(ArgOption option) {
@@ -979,6 +1023,8 @@ public class ArgsParser {
         }
 
         private int calcInfoWidth(String keyLine) {
+            // Note(Max): I would be easy to argue for this to set the field and not return a value, but I like how it
+            // looks when it returns a value, so I am going to leave it like this for the moment.
             int indentWidth = Math.max(keyLine.length(), BASE_NAME_COL_WIDTH);
 
             return LINE_WIDTH - indentWidth;
@@ -1148,6 +1194,63 @@ public class ArgsParser {
 
     public interface EnumOptions {
         ArgOption get();
+    }
+
+
+
+    public static void main(String[] args) {
+        ArgsParser argsParser = new ArgsParser(
+                new ArgsParser.ProgrammeDetails()
+                        .setCommandName("ColColorize")
+                        .setProgrammeName("Set Console Colours")
+                        .setProgrammeDescription("This program set the colours used by this console.")
+                        .setAuthor("Max Whitehouse")
+                        .setVersion("1.0.0"),
+                HelpEnumExample.class
+        );
+        argsParser.pareArgs(args);
+    }
+
+    private enum HelpEnumExample implements ArgsParser.EnumOptions {
+
+        BACKGROUND(new ArgsParser.ArgOption()
+                .setShortKey('b')
+                .setLongKey("Set-Background")
+                .setUsage(ArgsParser.E_Usage.KEY_VALUE)
+                .setDescription("This command sets the background colour of the console using an RGB 0-255 triplet.")
+                .setShortValueExample("(0,0,0)")
+                .setLongKeyValueExample("(0,0,0)")
+        ),
+
+        TEXT(new ArgsParser.ArgOption()
+                .setShortKey('t')
+                .setLongKey("Set-Text")
+                .setUsage(ArgsParser.E_Usage.KEY_VALUE)
+                .setDescription("This command sets the text colour if the console using an RGB 0-255 triplet.")
+        ),
+
+        RESET(new ArgsParser.ArgOption()
+                .setLongKey("Use-Defaults")
+                .setUsage(ArgsParser.E_Usage.KEY)
+                .setDescription("This command tells the console revert to its default colour scheme. This should be used on its own.")
+                .setUseOnItsOwn(true)
+        ),
+
+        CONFIGS(new ArgsParser.ArgOption()
+                .setUsage(ArgsParser.E_Usage.LIST)
+                .setDescription("This will take the path to json files and read a \"Set Console Colours\" configuration file.")
+        );
+
+        private final ArgsParser.ArgOption option;
+
+        HelpEnumExample(ArgsParser.ArgOption option) {
+            this.option = option;
+        }
+
+        public ArgsParser.ArgOption get() {
+            return option;
+        }
+
     }
 
 }

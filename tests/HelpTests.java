@@ -11,6 +11,9 @@ public class HelpTests {
             "This program set the colours used by this console.\n" +
             "By Max Whitehouse, version 1.0.0.\n" +
             "\n" +
+            "  -h, --help, --Help                    Use to print this help.\n" +
+            "                                        Example: ColColorize -h\n" +
+            "\n" +
             "  -b, --Set-Background                  This command sets the background colour of the console using\n" +
             "                                        an RGB 0-255 triplet.\n" +
             "                                        Usage: Key-value pair.\n" +
@@ -37,7 +40,7 @@ public class HelpTests {
 
 
 
-    ArgsParser.ProgrammeDetails makeProgrammeDetails() {
+    static ArgsParser.ProgrammeDetails makeProgrammeDetails() {
         return new ArgsParser.ProgrammeDetails()
                 .setCommandName("ColColorize")
                 .setProgrammeName("Set Console Colours")

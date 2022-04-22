@@ -21,6 +21,9 @@ charter 101. Therefore, to allow 40 charters of space for the keys, the info tex
 This program set the colours used by this console. 
 By Max Whitehouse, version 1.0.0.
 
+  -h, --help, --Help                    Use to print this help.
+                                        Example: ColColorize -h
+
   -b, --Set-Background                  This command sets the background colour of the console using
                                         an RGB 0-255 triplet.
                                         Usage: Key-value pair.
