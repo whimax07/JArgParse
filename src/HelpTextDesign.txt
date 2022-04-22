@@ -1,6 +1,6 @@
 
 Measurements are inclusive as I am counting how many charter I am placing so a line of 100 charters ends at the start of
-charter 101. Therefore, to allow 40 charters of space from the keys, the info bits should start at charter 41.
+charter 101. Therefore, to allow 40 charters of space for the keys, the info text should start at charter 41.
 
 |1                               |35  |40  |45            |60                                     |100
   -l, --This-Is-A-Pretty-Long-Tag       This is the start of the is long
