@@ -1,12 +1,23 @@
 // By Max Whitehouse.
 
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
 import static java.lang.System.exit;
 
+/**
+ * ArgParser provides a minimal command line parsing utility to allow you to build a programme that takes command line
+ * inputs quickly. It is contained in one file to allow easy copying into a project and only uses very basic standard
+ * library imports.<br>
+ * <br>
+ * It has 3 main selling points.
+ * <ol>
+ *     <li>A single file with no dependence outside of the standard library.</li>
+ *     <li>Automatically generated help and information dialog.</li>
+ *     <li>Enum indexing into {@link ArgsParser} to get the results of the parse if an enum was passed to it's
+ *     constructor.</li>
+ */
 @SuppressWarnings("unused")
 public class ArgsParser {
 
@@ -64,7 +75,7 @@ public class ArgsParser {
      *     public ArgOption get() {
      *         return option;
      *     }
-     * } } </pre>
+     * } }
      */
     public <E extends Enum<E> & EnumOptions> ArgsParser(ProgrammeDetails programmeDetails, Class<E> enumArgOptions) {
         this(programmeDetails, convertEnumToOptionsList(enumArgOptions));
@@ -173,6 +184,10 @@ public class ArgsParser {
 
 
 
+    /**
+     * Pass the string array parameter of the main function to this method to parse the command line. Then use this
+     * classes other public methods to interrogate the results.
+     */
     public void pareArgs(String[] commandLineArgs) {
         rawInputs = commandLineArgs;
         checkForHelpRequest();
@@ -542,10 +557,13 @@ public class ArgsParser {
         private String description = "";
 
         /**
-         * Set this to true if the option is supposed to be used without any other arguments. I.E. '--help'.
+         * Set this to true if the argument is supposed to be used without any other arguments. I.E. '--help'.
          */
         private boolean useOnItsOwn = false;
 
+        /**
+         * When this is false the user passing the argument more than once will throw an error.
+         */
         private boolean repeatable = false;
 
         @SuppressWarnings({"unused", "FieldMayBeFinal"})
@@ -677,8 +695,13 @@ public class ArgsParser {
                     "description=\"" + description + "\"" +
                     "}";
         }
+
     }
 
+    /**
+     * This class holds any values passed by the user, {@link ArgReceived#values}, for a given argument,
+     * {@link ArgReceived#option}.
+     */
     public static class ArgReceived {
 
         private final ArgOption option;
@@ -726,6 +749,9 @@ public class ArgsParser {
 
     }
 
+    /**
+     * This class holds details about the programme and is mainly used by {@link HelpBuilder}.
+     */
     public static class ProgrammeDetails {
 
         /**
@@ -793,6 +819,10 @@ public class ArgsParser {
 
     }
 
+    /**
+     * This class builds the help/info message displayed if any of the arguments in {@link ArgsParser#HELP_FLAGS} are
+     * passed.
+     */
     private class HelpBuilder {
 
         public StringBuilder stringBuilder = new StringBuilder();
