@@ -17,6 +17,18 @@ import static java.lang.System.exit;
  *     <li>Automatically generated help and information dialog.</li>
  *     <li>Enum indexing into {@link ArgsParser} to get the results of the parse if an enum was passed to it's
  *     constructor.</li>
+ *     </ol>
+ *
+ * <br>
+ * To parse a command line defined the arguments/options you would like your programme to take using {@link ArgOption}
+ * and a few details of your programme using {@link ProgrammeDetails}. Pass both of these to a contributor of this class.
+ * <br><br>
+ * Once you have an instance of {@link ArgsParser}, pass the string array you are passed in a main function to the
+ * {@link ArgsParser#pareArgs(String[])} and read the results from one of the public methods of {@link ArgsParser}.
+ * <br><br>
+ * Parsing a command line should only throw two types of run time error. They are {@link ArgumentOptionException} for a
+ * problem with the users configuration and {@link ParseArgumentException} for a problem with the usage of an argument
+ * or a failure to parse.
  */
 @SuppressWarnings("unused")
 public class ArgsParser {
@@ -490,24 +502,27 @@ public class ArgsParser {
 
 
     /**
-     * The format, set by usage, for args are: <br>
-     * &emsp;     1) -k <br>
-     * &emsp;    2) --Key-Word <br>
-     * &emsp;     3) -k arg <br>
-     * &emsp;     4) --Key-Word=arg <br>
-     * &emsp;    5) ... argList     &emsp;// There can only be one of these list args, and they are always at the end of the command. <br><br>
-     *
-     * The short key is `k`, the long key is `Key-Word`. <br><br>
-     *
-     * The position field describes how to combine the received string. If the key is to be parsed on its own assign it
-     * `KEY` 1) and 2), if the argument should be a key-value pair assign `KEY_VALUE` 3) and 4) or if it should be a
-     * list arg assign `LIST` 5). <br><br>
-     *
-     * The description, alongside the short value example, long value example and list example will be used in the help.
-     * This is dependent on whether they are set, if they match the usage and if the associated key is set. <br><br>
-     *
-     * There are 3 reserved keys they are -h, --help and --Help. They print the help and stop excursion.
+     * The user should instantiate this class for each argument/option they would like there programme to accept. The instances are
+     * then passed to a constructor of {@link ArgsParser}. Alternately the user can instantiate instances of this class inside
+     * the fields of an enum implementing {@link EnumOptions} and then pass the {@code .class} of that enum to {@link
+     * ArgsParser#ArgsParser(ProgrammeDetails, Class)}, see the constructor for details.
      */
+//     * The format, set by usage, for args are: <br>
+//     * &emsp;     1) -k <br>
+//     * &emsp;    2) --Key-Word <br>
+//     * &emsp;     3) -k arg <br>
+//     * &emsp;     4) --Key-Word=arg <br>
+//     * &emsp;    5) ... argList     &emsp;// There can only be one of these list args, and they are always at the end of the command. <br><br>
+//     *
+//     * The short key is `k`, the long key is `Key-Word`. <br><br>
+//     *
+//     * The position field describes how to combine the received string. If the key is to be parsed on its own assign it
+//     * `KEY` 1) and 2), if the argument should be a key-value pair assign `KEY_VALUE` 3) and 4) or if it should be a
+//     * list arg assign `LIST` 5). <br><br>
+//     *
+//     * There are several reversed keys to print the help, they are saved in {@link ArgsParser#HELP_FLAGS}. They print
+//     * the help and stop excursion.
+
     public static class ArgOption {
 
         /**
