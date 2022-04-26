@@ -17,7 +17,7 @@ import static java.lang.System.exit;
  *     <li>Automatically generated help and information dialog.</li>
  *     <li>Enum indexing into {@link ArgsParser} to get the results of the parse if an enum was passed to it's
  *     constructor.</li>
- *     </ol>
+ * </ol>
  *
  * <br>
  * To parse a command line defined the arguments/options you would like your programme to take using {@link ArgOption}
@@ -505,24 +505,25 @@ public class ArgsParser {
      * The user should instantiate this class for each argument/option they would like there programme to accept. The instances are
      * then passed to a constructor of {@link ArgsParser}. Alternately the user can instantiate instances of this class inside
      * the fields of an enum implementing {@link EnumOptions} and then pass the {@code .class} of that enum to {@link
-     * ArgsParser#ArgsParser(ProgrammeDetails, Class)}, see the constructor for details.
+     * ArgsParser#ArgsParser(ProgrammeDetails, Class)}, see the constructor for details. <br>
+     * <br>
+     * The user can configure: <br>
+     * <ul>
+     *     <li> The short key, {@link ArgOption#shortKey}. </li>
+     *     <li> The long key, {@link ArgOption#longKey}. </li>
+     *     <li> The format to use the argument, {@link ArgOption#usage}. </li>
+     *     <li> An example of how to use the short key, {@link ArgOption#shortValueExample}. </li>
+     *     <li> An example of how to use the long key, {@link ArgOption#longKeyValueExample}. </li>
+     *     <li> An example of how to use the argument if it is a list, {@link ArgOption#listExample}. </li>
+     *     <li> A description of what the argument does and what it is used for, {@link ArgOption#description}. </li>
+     *     <li> Whether the argument should be passed on it's own, {@link ArgOption#useOnItsOwn}. </li>
+     *     <li> Whether the argument can be used more than once, {@link ArgOption#repeatable}. </li>
+     * </ul>
+     *
+     * <br>
+     * There are several reversed keys to print the help, they are saved in {@link ArgsParser#HELP_FLAGS}. They print
+     * the help and stop excursion.
      */
-//     * The format, set by usage, for args are: <br>
-//     * &emsp;     1) -k <br>
-//     * &emsp;    2) --Key-Word <br>
-//     * &emsp;     3) -k arg <br>
-//     * &emsp;     4) --Key-Word=arg <br>
-//     * &emsp;    5) ... argList     &emsp;// There can only be one of these list args, and they are always at the end of the command. <br><br>
-//     *
-//     * The short key is `k`, the long key is `Key-Word`. <br><br>
-//     *
-//     * The position field describes how to combine the received string. If the key is to be parsed on its own assign it
-//     * `KEY` 1) and 2), if the argument should be a key-value pair assign `KEY_VALUE` 3) and 4) or if it should be a
-//     * list arg assign `LIST` 5). <br><br>
-//     *
-//     * There are several reversed keys to print the help, they are saved in {@link ArgsParser#HELP_FLAGS}. They print
-//     * the help and stop excursion.
-
     public static class ArgOption {
 
         /**
@@ -580,9 +581,6 @@ public class ArgsParser {
          * When this is false the user passing the argument more than once will throw an error.
          */
         private boolean repeatable = false;
-
-        @SuppressWarnings({"unused", "FieldMayBeFinal"})
-        private E_Types typeSig = null;
 
 
 
@@ -1204,6 +1202,10 @@ public class ArgsParser {
 
     }
 
+    /**
+     * A runtime exception class that is thrown when there is a problem with how the code writer has configured
+     * {@link  ArgsParser} using {@link ArgOption}s. (Mostly throw from a call to a constructor of {@link ArgsParser}.)
+     */
     public static class ArgumentOptionException extends RuntimeException {
 
         public ArgumentOptionException() {
@@ -1216,6 +1218,11 @@ public class ArgsParser {
 
     }
 
+    /**
+     * A runtime exception class that is thrown when there is a problem with either how the arguments are used in the
+     * command line or if there is an error during the parse of command line. (Mostly thrown by
+     * {@link ArgsParser#pareArgs(String[])}.)
+     */
     public static class ParseArgumentException extends RuntimeException {
 
         public ParseArgumentException() {
@@ -1230,19 +1237,39 @@ public class ArgsParser {
 
 
 
-    public enum E_Types {
-        FILE,
-        STRING,
-        INT,
-        FLOAT
-    }
-
+    /**
+     * The usages as they relate to each key type are: <br>
+     * <ol>
+     *      <li> -k </li>
+     *      <li> --Key-Word </li>
+     *      <li> -k arg </li>
+     *      <li> --Key-Word=arg </li>
+     *      <li> ... argList </li>
+     * </ol>
+     * KEY is 1 and 2. KEY_VALUE is 3 and 4. LIST is 5. <br>
+     * The short key is `k` and the long key is `Key-Word`. argList is a space delimited list. There can only be one
+     * list arg, and they are always at the end of the command. <br>
+     */
     public enum E_Usage {
+        /**
+         * Use this is the key should be used on its own without a value argument. Aka a flag.
+         */
         KEY,
+        /**
+         * Use this if the argument should accept and require a value argument. Aka a key-value pair.
+         */
         KEY_VALUE,
+        /**
+         * Use this if the argument should be a positional list, space delimited, always passed as the last part of the
+         * command line. This can only be used by one {@link ArgOption} per {@link ArgsParser} instances.
+         */
         LIST
     }
 
+    /**
+     * The interface used with an enum to allow for indexing the results of a parse with an enum. See
+     * {@link ArgsParser#ArgsParser(ProgrammeDetails, Class)} for details and an example.
+     */
     public interface EnumOptions {
         ArgOption get();
     }
