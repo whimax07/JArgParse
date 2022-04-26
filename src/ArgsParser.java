@@ -7,7 +7,7 @@ import java.util.HashMap;
 import static java.lang.System.exit;
 
 /**
- * ArgParser provides a minimal command line parsing utility to allow you to build a programme that takes command line
+ * <b>ArgParser</b> provides a minimal command line parsing utility to allow you to build a programme that takes command line
  * inputs quickly. It is contained in one file to allow easy copying into a project and only uses very basic standard
  * library imports.<br>
  * <br>
@@ -21,14 +21,53 @@ import static java.lang.System.exit;
  *
  * <br>
  * To parse a command line defined the arguments/options you would like your programme to take using {@link ArgOption}
- * and a few details of your programme using {@link ProgrammeDetails}. Pass both of these to a contributor of this class.
- * <br><br>
+ * and a few details of your programme using {@link ProgrammeDetails}. Pass both of these to a contributor of this
+ * class. <br><br>
+ *
  * Once you have an instance of {@link ArgsParser}, pass the string array you are passed in a main function to the
- * {@link ArgsParser#pareArgs(String[])} and read the results from one of the public methods of {@link ArgsParser}.
- * <br><br>
+ * {@link ArgsParser#pareArgs(String[])} and read the results from one of the public methods of {@link ArgsParser}. <br>
+ * <br>
+ *
  * Parsing a command line should only throw two types of run time error. They are {@link ArgumentOptionException} for a
  * problem with the users configuration and {@link ParseArgumentException} for a problem with the usage of an argument
- * or a failure to parse.
+ * or a failure to parse. <br><br>
+ *
+ * <b>Example Usage: </b><br>
+ *
+ * <pre> {@code
+ * public int main(String[] args) {
+ *     // Using the contractor that takes the enum class so we can index into the results with the enum.
+ *     ArgParser argParser = new ArgParser(makeProgrammeDetails(), EnumArgOptions.class);
+ *
+ *     // Pass the command line to be parsed.
+ *     argParse.parseArgs(args);
+ *
+ *     // The rest of your code that uses what the user passed on the command line.
+ *     if (argParser.isPassed(EnumArgOptions.OPTION1)) {
+ *         // Do somethings.
+ *     }
+ *     ...
+ * }
+ *
+ * private static ArgParser.ProgrammeDetails makeProgrammeDetails() {
+ *     // Construct and return an instance of ProgrammeDetails.
+ * }
+ *
+ * enum EnumArgOptions implements EnumOptions {
+ *     OPTION1 (new ArgOption(...)),
+ *     ... ;
+ *
+ *     private ArgOption option;
+ *
+ *     EnumArgOptions(ArgOption option) {
+ *         this.option = option;
+ *     }
+ *
+ *     public ArgOption get() {
+ *         return option;
+ *     }
+ * }
+ * }</pre>
  */
 @SuppressWarnings("unused")
 public class ArgsParser {
@@ -66,28 +105,10 @@ public class ArgsParser {
 
 
     /**
-     * Make an enum that implements EnumOptions and has a field that contains an ArgOption. Then call {@code
-     * ArgParser argParser = ArgParser(programmeDetails, EnumArgOptions.class);} <br><br>
-     *
-     * Why? Because then you can index into the results of the parse with the enum, for example {@code
-     * argParser.isPassed(EnumArgOptions.OPTION1);} <br><br>
-     *
-     * Enum:
-     * <pre> {@code
-     * enum EnumArgOptions implements EnumOptions {
-     *     OPTION1 (new ArgOption(...)),
-     *     ... ;
-     *
-     *     private ArgOption option;
-     *
-     *     EnumArgOptions(ArgOption option) {
-     *         this.option = option;
-     *     }
-     *
-     *     public ArgOption get() {
-     *         return option;
-     *     }
-     * } }
+     * This is the recommended constructor. It is the same as
+     * {@link ArgsParser#ArgsParser(ProgrammeDetails, ArgOption[])} and
+     * {@link ArgsParser#ArgsParser(ProgrammeDetails, ArrayList)} apart from adding the option to index into the
+     * results of the parse using the enum passed to the constructor.
      */
     public <E extends Enum<E> & EnumOptions> ArgsParser(ProgrammeDetails programmeDetails, Class<E> enumArgOptions) {
         this(programmeDetails, convertEnumToOptionsList(enumArgOptions));
@@ -102,10 +123,20 @@ public class ArgsParser {
         return argOptions;
     }
 
+    /**
+     * Equivalent to {@link ArgsParser#ArgsParser(ProgrammeDetails, ArrayList)}. Using this constructor means you won't
+     * get the automatic enum binding to the parse results. Everything else is the same as
+     * {@link ArgsParser#ArgsParser(ProgrammeDetails, Class)}.
+     */
     public ArgsParser(ProgrammeDetails programmeDetails, ArgOption[] argOptions) {
         this(programmeDetails, new ArrayList<>(Arrays.asList(argOptions)));
     }
 
+    /**
+     * Equivalent to {@link ArgsParser#ArgsParser(ProgrammeDetails, ArgOption[])}. Using this constructor means you
+     * won't get the automatic enum binding to the parse results. Everything else is the same as
+     * {@link ArgsParser#ArgsParser(ProgrammeDetails, Class)}.
+     */
     public ArgsParser(ProgrammeDetails programmeDetails, ArrayList<ArgOption> argOptions) {
         if (programmeDetails == null) {
             throw new NullPointerException("programmeDetails cannot be null.");
