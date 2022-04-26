@@ -108,7 +108,25 @@ public class ArgsParser {
      * This is the recommended constructor. It is the same as
      * {@link ArgsParser#ArgsParser(ProgrammeDetails, ArgOption[])} and
      * {@link ArgsParser#ArgsParser(ProgrammeDetails, ArrayList)} apart from adding the option to index into the
-     * results of the parse using the enum passed to the constructor.
+     * results of the parse using the enum passed to the constructor. <br><br>
+     *
+     * The enum this contractor takes should implement {@link EnumOptions} and look something like this: <br>
+     * <pre>{@code
+     *  enum EnumArgOptions implements EnumOptions {
+     *      OPTION1 (new ArgOption(...)),
+     *      ... ;
+     *
+     *      private ArgOption option;
+     *
+     *      EnumArgOptions(ArgOption option) {
+     *          this.option = option;
+     *      }
+     *
+     *      public ArgOption get() {
+     *          return option;
+     *      }
+     *  }
+     * }</pre>
      */
     public <E extends Enum<E> & EnumOptions> ArgsParser(ProgrammeDetails programmeDetails, Class<E> enumArgOptions) {
         this(programmeDetails, convertEnumToOptionsList(enumArgOptions));
