@@ -92,9 +92,9 @@ public class ArgsParser {
 
     private final HashMap<ArgOption, ArgReceived> optionResultMap = new HashMap<>();
 
-    private final HashMap<Character, ArgReceived> shortMap = new HashMap<>();
+    private final HashMap<Character, ArgReceived> shortResultMap = new HashMap<>();
 
-    private final HashMap<String, ArgReceived> longMap = new HashMap<>();
+    private final HashMap<String, ArgReceived> longResultMap = new HashMap<>();
 
     private ArgReceived currentKeyPair;
 
@@ -451,11 +451,11 @@ public class ArgsParser {
         optionResultMap.put(option, argReceived);
 
         if (option.shortKey != '\0') {
-            shortMap.put(option.shortKey, argReceived);
+            shortResultMap.put(option.shortKey, argReceived);
         }
 
         if (!option.longKey.isEmpty()) {
-            longMap.put(option.longKey, argReceived);
+            longResultMap.put(option.longKey, argReceived);
         }
     }
 
@@ -493,10 +493,18 @@ public class ArgsParser {
 
 
 
-    public <T extends ArgsParser.EnumOptions> boolean isPassed(T option) {
+    /**
+     * Returns true if the user passed the option at least once.
+     *
+     * @param option An enum value where the enum class implements a {@link EnumOptions}.
+     */
+    public <E extends Enum<E> & ArgsParser.EnumOptions> boolean isPassed(E option) {
         return isPassed(option.get());
     }
 
+    /**
+     * Returns true if the user passed the option at least once.
+     */
     public boolean isPassed(ArgOption option) {
         if (option == null) {
             throw new NullPointerException("The option received to look for a result was null.");
@@ -505,43 +513,53 @@ public class ArgsParser {
         return optionResultMap.containsKey(option) && optionResultMap.get(option) != null;
     }
 
+    /**
+     * Returns true if the user used the argument the key is associated with at least once.
+     * @param key The short or long key for an argument you have configured.
+     */
     public boolean isPassed(String key) {
         boolean isShortKey = key.length() == 1;
         boolean hasShortKey = isShortKey && isShortPassed(key.charAt(0));
-        return longMap.containsKey(key) || hasShortKey;
+        return hasShortKey || longResultMap.containsKey(key);
     }
 
+    /**
+     * Returns true if the user used the argument the short key is associated with at least once.
+     */
     public boolean isShortPassed(char key) {
-        return shortMap.containsKey(key);
+        return shortResultMap.containsKey(key);
     }
 
+    /**
+     * Returns true if the user used the argument the long key is associated with at least once.
+     */
     public boolean isLongPassed(String longKey) {
-        return longMap.containsKey(longKey);
+        return longResultMap.containsKey(longKey);
     }
 
-    public <T extends ArgsParser.EnumOptions> ArgReceived getArgument(T option) {
+    public <E extends Enum<E> & ArgsParser.EnumOptions> ArgReceived getArgument(E option) {
         return optionResultMap.get(option.get());
     }
 
     public ArgReceived getArgument(String key) {
-        if (longMap.containsKey(key)) {
-            return longMap.get(key);
+        if (longResultMap.containsKey(key)) {
+            return longResultMap.get(key);
         }
 
         boolean isShortKey = key.length() == 1;
-        if (isShortKey && shortMap.containsKey(key.charAt(0))) {
-            return shortMap.get(key.charAt(0));
+        if (isShortKey && shortResultMap.containsKey(key.charAt(0))) {
+            return shortResultMap.get(key.charAt(0));
         }
 
         return null;
     }
 
     public ArgReceived getShortArgument(char key) {
-        return shortMap.get(key);
+        return shortResultMap.get(key);
     }
 
     public ArgReceived getLongPassed(String longKey) {
-        return longMap.get(longKey);
+        return longResultMap.get(longKey);
     }
 
     public String getHelpText() {
