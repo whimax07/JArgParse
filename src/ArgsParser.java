@@ -36,7 +36,8 @@ import static java.lang.System.exit;
  *
  * <pre> {@code
  * public int main(String[] args) {
- *     // Using the contractor that takes the enum class so we can index into the results with the enum.
+ *     // Using the contractor that takes the enum class so we can index into
+ *     // the results with the enum.
  *     ArgParser argParser = new ArgParser(makeProgrammeDetails(), EnumArgOptions.class);
  *
  *     // Pass the command line to be parsed.
@@ -146,7 +147,7 @@ public class ArgsParser {
      * get the automatic enum binding to the parse results. Everything else is the same as
      * {@link ArgsParser#ArgsParser(ProgrammeDetails, Class)}.
      */
-    public ArgsParser(ProgrammeDetails programmeDetails, ArgOption[] argOptions) {
+    public ArgsParser(ProgrammeDetails programmeDetails, ArgOption... argOptions) {
         this(programmeDetails, new ArrayList<>(Arrays.asList(argOptions)));
     }
 
@@ -494,16 +495,16 @@ public class ArgsParser {
 
 
     /**
-     * Returns true if the user passed the option at least once.
+     * @param option An enum value where the enum class implements an {@link EnumOptions}.
      *
-     * @param option An enum value where the enum class implements a {@link EnumOptions}.
+     * @return True if the user passed the option at least once.
      */
     public <E extends Enum<E> & ArgsParser.EnumOptions> boolean isPassed(E option) {
         return isPassed(option.get());
     }
 
     /**
-     * Returns true if the user passed the option at least once.
+     * @return True if the user passed the option at least once.
      */
     public boolean isPassed(ArgOption option) {
         if (option == null) {
@@ -514,8 +515,12 @@ public class ArgsParser {
     }
 
     /**
-     * Returns true if the user used the argument the key is associated with at least once.
-     * @param key The short or long key for an argument you have configured.
+     * @param key The short or long key for an argument you have configured. Is not checked if the key is bound to an
+     *            option. Therefore, it is suggested that you use a version of this function that takes an
+     *            {@link ArgOption} or a {@link EnumOptions} enum.
+     *
+     * @return True if the user used the argument the key is associated with at least once. False if the key is not used
+     * or if the key is not bound to an option.
      */
     public boolean isPassed(String key) {
         boolean isShortKey = key.length() == 1;
@@ -524,23 +529,41 @@ public class ArgsParser {
     }
 
     /**
-     * Returns true if the user used the argument the short key is associated with at least once.
+     * @param key Is not checked to see if it is bound to an option. Therefore, it is suggested that you use a version
+     *            of this function that takes an {@link ArgOption} or a {@link EnumOptions} enum.
+     *
+     * @return True if the user used the argument the short key is associated with at least once. False if the key is
+     * not used or if the key is not bound to an option.
      */
     public boolean isShortPassed(char key) {
         return shortResultMap.containsKey(key);
     }
 
     /**
-     * Returns true if the user used the argument the long key is associated with at least once.
+     * @param longKey Is not checked to see if it is bound to an option. Therefore, it is suggested that you use a
+     *                version of this function that takes an {@link ArgOption} or a {@link EnumOptions} enum.
+     *
+     * @return True if the user used the argument the long key is associated with at least once. False if the key is not
+     * used or if the key is not bound to an option.
      */
     public boolean isLongPassed(String longKey) {
         return longResultMap.containsKey(longKey);
     }
 
+    /**
+     * @return If the option the key is a part of was used it will return a container with the passed value or values.
+     * Null is returned if option was not passed.
+     */
     public <E extends Enum<E> & ArgsParser.EnumOptions> ArgReceived getArgument(E option) {
         return optionResultMap.get(option.get());
     }
 
+    /**
+     * @return If the option the key is a part of was used it will return a container with the passed value or values.
+     * Null is returned if option was not passed.
+     *
+     * @throws ArgumentOptionException If {@code key} is not bound to an option.
+     */
     public ArgReceived getArgument(String key) {
         if (longResultMap.containsKey(key)) {
             return longResultMap.get(key);
@@ -551,17 +574,34 @@ public class ArgsParser {
             return shortResultMap.get(key.charAt(0));
         }
 
-        return null;
+        throw new ArgumentOptionException("The key (\"" + key + "\") is not bound to an option.");
     }
 
-    public ArgReceived getShortArgument(char key) {
-        return shortResultMap.get(key);
+    /**
+     * @param shortKey Is not checked to see if it is bound to an option. Therefore, it is suggested that you use a
+     *                 version of this function that takes an {@link ArgOption} or a {@link EnumOptions} enum.
+     *
+     * @return If the option the key is a part of was used it will return a container with the passed value or values.
+     * Null is returned if option was not passed. If the key is not bound null is returned.
+     */
+    public ArgReceived getShortArgument(char shortKey) {
+        return shortResultMap.get(shortKey);
     }
 
+    /**
+     * {@code longKey} is not checked to see if it is bound to an option. Therefore, it is suggested that you use a
+     * version of this function that takes an {@link ArgOption} or a {@link EnumOptions} enum. <br>
+     * <br>
+     * Returns a container with the passed value or values if the option the key is a part of was used.
+     * Null is returned if option was not passed. If the key is not bound null is returned.
+     */
     public ArgReceived getLongPassed(String longKey) {
         return longResultMap.get(longKey);
     }
 
+    /**
+     * Returns the automatically generated help text.
+     */
     public String getHelpText() {
         return help;
     }
