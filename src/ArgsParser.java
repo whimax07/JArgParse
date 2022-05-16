@@ -515,9 +515,9 @@ public class ArgsParser {
     }
 
     /**
-     * @param key The short or long key for an argument you have configured. Is not checked if the key is bound to an
-     *            option. Therefore, it is suggested that you use a version of this function that takes an
-     *            {@link ArgOption} or a {@link EnumOptions} enum.
+     * @param key A short or long key that is bound to an {@link ArgOption} for an argument you have configured. It is
+     *            not checked if the key is bound to an option. Therefore, it is recommended that you use a version of
+     *            this function that takes an {@link ArgOption} or a {@link EnumOptions} enum.
      *
      * @return True if the user used the argument the key is associated with at least once. False if the key is not used
      * or if the key is not bound to an option.
@@ -559,6 +559,8 @@ public class ArgsParser {
     }
 
     /**
+     * @param key A short or long key that is bound to an {@link ArgOption} for an option you have configured.
+     *
      * @return If the option the key is a part of was used it will return a container with the passed value or values.
      * Null is returned if option was not passed.
      *
@@ -578,8 +580,8 @@ public class ArgsParser {
     }
 
     /**
-     * @param shortKey Is not checked to see if it is bound to an option. Therefore, it is suggested that you use a
-     *                 version of this function that takes an {@link ArgOption} or a {@link EnumOptions} enum.
+     * @param shortKey Should be bound to an {@link ArgOption} this is not checked. Therefore, it is suggested that you
+     *                 use a version of this function that takes an {@link ArgOption} or a {@link EnumOptions} enum.
      *
      * @return If the option the key is a part of was used it will return a container with the passed value or values.
      * Null is returned if option was not passed. If the key is not bound null is returned.
