@@ -6,7 +6,7 @@ enum EnumArgOptions implements ArgsParser.EnumOptions {
             .setUsage(ArgsParser.E_Usage.KEY_VALUE)
             .setDescription("This command sets the background colour of the console using an RGB 0-255 triplet.")
             .setShortValueExample("(0,0,0)")
-            .setLongKeyValueExample("(0,0,0)")),
+            .setLongValueExample("(0,0,0)")),
 
     TEXT(new ArgsParser.ArgOption()
             .setShortKey('t')

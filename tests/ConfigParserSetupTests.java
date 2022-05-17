@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class UserConfigParser {
+class ConfigParserTests {
 
     ArgsParser.ProgrammeDetails makeProgrammeDetails() {
         return new ArgsParser.ProgrammeDetails().setCommandName("ColColorize");
@@ -19,7 +19,7 @@ class UserConfigParser {
                         .setUsage(ArgsParser.E_Usage.KEY_VALUE)
                         .setDescription("This command sets the background colour of the console using an RGB 0-255 triplet.")
                         .setShortValueExample("(0,0,0)")
-                        .setLongKeyValueExample("(0,0,0)"),
+                        .setLongValueExample("(0,0,0)"),
 
                 new ArgsParser.ArgOption()
                         .setShortKey('t')
@@ -41,7 +41,7 @@ class UserConfigParser {
     enum ShortLongKey implements ArgsParser.EnumOptions {
         FAIL(new ArgsParser.ArgOption().setLongKey("A").setUsage(ArgsParser.E_Usage.KEY));
 
-        ArgsParser.ArgOption option;
+        final ArgsParser.ArgOption option;
         ShortLongKey(ArgsParser.ArgOption option) {
             this.option = option;
         }

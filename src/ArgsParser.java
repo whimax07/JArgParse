@@ -288,7 +288,7 @@ public class ArgsParser {
             }
 
             // Expecting a value.
-            checkMalformedValue(rawInput);
+            checkLooksLikeAValue(rawInput);
             assignValueAndCycleSearch(rawInput);
         }
 
@@ -460,7 +460,9 @@ public class ArgsParser {
         }
     }
 
-    private void checkMalformedValue(String rawInput) {
+    private void checkLooksLikeAValue(String rawInput) {
+        // Note(Max): I have done this type of error detection a bunch, and it doesn't tell me why this is an error. I
+        //  think it is just bad.
         if (rawInput.startsWith("-")) {
             String errorMessage =
                     "Expected a value, got a key. Look for spaces and check if a key can except a value.\n"
@@ -567,6 +569,9 @@ public class ArgsParser {
      * @throws ArgumentOptionException If {@code key} is not bound to an option.
      */
     public ArgReceived getArgument(String key) {
+        if (!keyMap.containsKey(key)) {
+            throw new ArgumentOptionException("The key (\"" + key + "\") is not bound to an option.");
+        }
         if (longResultMap.containsKey(key)) {
             return longResultMap.get(key);
         }
@@ -576,7 +581,7 @@ public class ArgsParser {
             return shortResultMap.get(key.charAt(0));
         }
 
-        throw new ArgumentOptionException("The key (\"" + key + "\") is not bound to an option.");
+        return null;
     }
 
     /**
@@ -622,7 +627,7 @@ public class ArgsParser {
      *     <li> The long key, {@link ArgOption#longKey}. </li>
      *     <li> The format to use the argument, {@link ArgOption#usage}. </li>
      *     <li> An example of how to use the short key, {@link ArgOption#shortValueExample}. </li>
-     *     <li> An example of how to use the long key, {@link ArgOption#longKeyValueExample}. </li>
+     *     <li> An example of how to use the long key, {@link ArgOption#longValueExample}. </li>
      *     <li> An example of how to use the argument if it is a list, {@link ArgOption#listExample}. </li>
      *     <li> A description of what the argument does and what it is used for, {@link ArgOption#description}. </li>
      *     <li> Whether the argument should be passed on it's own, {@link ArgOption#useOnItsOwn}. </li>
@@ -655,29 +660,33 @@ public class ArgsParser {
         private E_Usage usage = null;
 
         /**
-         * An example usage of the short key that will be printed for the user if they use one of the help flags.
+         * An example usage of the short key that will be printed for the user if they use one of the help flags and: <br>
+         * 1) The short key has been set. <br>
+         * 2) {@link ArgOption#usage} is {@link E_Usage#KEY_VALUE}. <br>
          * <br>
-         * {@code Example: (1, 2, 3) -> ColColorize ... -t (1,2,3) ...}
+         * {@code Example: '(1, 2, 3)' -> 'ColColorize ... -t (1,2,3) ...'}
          */
         private String shortValueExample = "{value}";
 
         /**
-         * An example usage of the long key that will be printed for the user if they use one of the help flags.
+         * An example usage of the long key that will be printed for the user if they use one of the help flags and: <br>
+         * 1) The short key has been set. <br>
+         * 2) {@link ArgOption#usage} is {@link E_Usage#KEY_VALUE}. <br>
          * <br>
-         * {@code Example: Bright Blue -> ColColorize ... -Text-Colour="Bright Blue" ...}
+         * {@code Example: 'Bright Blue' -> 'ColColorize ... -Text-Colour="Bright Blue" ...'}
          */
-        private String longKeyValueExample = "{value}";
+        private String longValueExample = "{value}";
 
         /**
          * An example usage of the space delimited list positional argument that will be printed for the user if they
          * use one of the help flags.
          * <br>
-         * {@code Example: Max, Maximus and Maximilian -> BuildProfiles ... Max Maximus Maximilian}
+         * {@code Example: 'Max, Maximus and Maximilian' -> 'BuildProfiles ... Max Maximus Maximilian'}
          */
         private String listExample = "{value} {value} {value}";
 
         /**
-         * A description of what the argument is used for.
+         * A description of what the argument is used for in your programme.
          */
         private String description = "";
 
@@ -735,37 +744,84 @@ public class ArgsParser {
             return this;
         }
 
+        /**
+         * Returns the usage. See {@link ArgsParser.ArgOption#usage}.
+         */
         public E_Usage getUsage() {
             return usage;
         }
 
+        /**
+         * Sets the way the argument is used. See {@link ArgsParser.ArgOption#usage}.
+         */
         public ArgOption setUsage(E_Usage usage) {
             this.usage = usage;
             return this;
         }
 
+        /**
+         * Returns the example that will be used for the short key in the generated help text if the short key is set
+         * and the argument has usage, KEY_VALUE. <br>
+         * <br>
+         * See {@link ArgOption#shortValueExample}.
+         */
         public String getShortValueExample() {
             return shortValueExample;
         }
 
+        /**
+         * Sets the example that will be used for the short key in the generated help text if the short key is set and
+         * the argument has usage, {@link E_Usage#KEY_VALUE}. <br>
+         * <br>
+         * {@code default = "{value}";} <br>
+         * <br>
+         * See {@link ArgOption#shortValueExample}.
+         */
         public ArgOption setShortValueExample(String shortValueExample) {
             this.shortValueExample = shortValueExample;
             return this;
         }
 
-        public String getLongKeyValueExample() {
-            return longKeyValueExample;
+        /**
+         * Returns the example that will be used for the long key in the generated help text if the long key is set. <br>
+         * <br>
+         * See {@link ArgOption#longValueExample}.
+         */
+        public String getLongValueExample() {
+            return longValueExample;
         }
 
-        public ArgOption setLongKeyValueExample(String longKeyValueExample) {
-            this.longKeyValueExample = longKeyValueExample;
+        /**
+         * Sets the example that will be used for the long key in the generated help text if the long key is set and the
+         * argument has usage, {@link E_Usage#KEY_VALUE}. <br>
+         * <br>
+         * {@code default = "{value}";} <br>
+         * <br>
+         * See {@link ArgOption#longValueExample}.
+         */
+        public ArgOption setLongValueExample(String longValueExample) {
+            this.longValueExample = longValueExample;
             return this;
         }
 
+        /**
+         * Returns the example that will be included in the generated help if this argument has usage,
+         * {@link E_Usage#LIST}, a space delimited list. <br>
+         * <br>
+         * See {@link ArgOption#listExample}.
+         */
         public String getListExample() {
             return listExample;
         }
 
+        /**
+         * Set the example that will be included in the generated help if this argument has usage, {@link E_Usage#LIST},
+         * a space delimited list. <br>
+         * <br>
+         * {@code default = "{value} {value} {value}";} <br>
+         * <br>
+         * See {@link ArgOption#listExample}.
+         */
         public ArgOption setListExample(String listExample) {
             this.listExample = listExample;
             return this;
@@ -785,9 +841,11 @@ public class ArgsParser {
         }
 
         /**
-         * Set this as true and if the key is passed it should be the only key. For example '--help'.
+         * Set this as true and if the key is passed it should be the only key. For example '--help'. <br>
          * <br>
-         * Default: false.
+         * {@code default = false;} <br>
+         * <br>
+         * See {@link ArgOption#useOnItsOwn}.
          */
         public ArgOption setUseOnItsOwn(boolean useOnItsOwn) {
             this.useOnItsOwn = useOnItsOwn;
@@ -812,7 +870,7 @@ public class ArgsParser {
                     "longKey=\"" + longKey + "\", " +
                     "usage=" + usage + ", " +
                     "shortValueExample=\"" + shortValueExample + "\", " +
-                    "longKeyValueExample=\"" + longKeyValueExample + "\", " +
+                    "longKeyValueExample=\"" + longValueExample + "\", " +
                     "listExample=\"" + listExample + "\", " +
                     "description=\"" + description + "\"" +
                     "}";
@@ -1242,7 +1300,7 @@ public class ArgsParser {
             }
 
             if (!option.longKey.isEmpty()) {
-                String valueExample = (option.usage == E_Usage.KEY) ? "" : "=" + option.getLongKeyValueExample();
+                String valueExample = (option.usage == E_Usage.KEY) ? "" : "=" + option.getLongValueExample();
 
                 String longExample = EXAMPLE_PREFIX + commandName + ellipses + "--" + option.getLongKey()
                         + valueExample + ellipses;
