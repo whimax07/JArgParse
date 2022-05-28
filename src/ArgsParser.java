@@ -86,6 +86,8 @@ public class ArgsParser {
 
     private static final String[] HELP_FLAGS = new String[] {"-h", "--help", "--Help"};
 
+    private boolean parseErrorsDisplayStackTrace = true;
+
     // Input things.
     private String[] rawInputs;
 
@@ -242,6 +244,19 @@ public class ArgsParser {
         if (!argOption.longKey.isEmpty()) {
             keyMap.put(argOption.longKey, argOption);
         }
+    }
+
+
+
+    /**
+     * When a parse error happens a Runtime Error is generated and thrown with a message about what caused
+     * the error. If this is true stack trace is included. If this is false no stack trace is included. This may be
+     * desirable for a production release. <br>
+     * <br>
+     * {@code default = true;}
+     */
+    public void setParseErrorsDisplayStackTrace(boolean displayStackTrace) {
+        parseErrorsDisplayStackTrace = displayStackTrace;
     }
 
 
@@ -1533,7 +1548,7 @@ public class ArgsParser {
      * command line or if there is an error during the parse of command line. (Mostly thrown by
      * {@link ArgsParser#pareArgs(String[])}.)
      */
-    public static class ParseArgumentException extends RuntimeException {
+    public class ParseArgumentException extends RuntimeException {
 
         public ParseArgumentException() {
             super();
@@ -1541,6 +1556,13 @@ public class ArgsParser {
 
         public ParseArgumentException(String message) {
             super(message + "\n" + "Use -h, --help or --Help for help.");
+        }
+
+
+
+        @Override
+        public synchronized Throwable fillInStackTrace() {
+            return (parseErrorsDisplayStackTrace) ? super.fillInStackTrace() : null;
         }
 
     }
