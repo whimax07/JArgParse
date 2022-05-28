@@ -997,57 +997,115 @@ public class ArgsParser {
          */
         private String programmeName = "";
 
+        /**
+         * This is a description of the programme that will is used in the help text.
+         */
         private String programmeDescription = "";
 
+        /**
+         * The author or authors of the programme that is used in the help text.
+         */
         private String author = "";
 
+        /**
+         * The version of the programme that is used in the help text.
+         */
         private String version = "";
 
 
 
+        /**
+         * Returns the command mnemonic used in the help text. See {@link ProgrammeDetails#commandName}.
+         */
         public String getCommandName() {
             return commandName;
         }
 
+        /**
+         * Sets the command mnemonic used to call the programme. This is used in the help text. See
+         * {@link ProgrammeDetails#commandName}.
+         */
         public ProgrammeDetails setCommandName(String commandName) {
             this.commandName = commandName;
             return this;
         }
 
+        /**
+         * Get the programme name. See {@link ProgrammeDetails#programmeName}.
+         */
         public String getProgrammeName() {
             return programmeName;
         }
 
+        /**
+         * Sets the programme name, the proper name of the programme e.g. Google Chrome, used in the help text. If this
+         * is not set {@link ProgrammeDetails#commandName} is used instead. See {@link ProgrammeDetails#programmeName}.
+         */
         public ProgrammeDetails setProgrammeName(String programmeName) {
             this.programmeName = programmeName;
             return this;
         }
 
+        /**
+         * Gets the description of the programme that is used in the help text. See
+         * {@link ProgrammeDetails#programmeDescription}.
+         */
         public String getProgrammeDescription() {
             return programmeDescription;
         }
 
+        /**
+         * Sets the description of the programme that is used in the help text. See
+         * {@link ProgrammeDetails#programmeDescription}.
+         */
         public ProgrammeDetails setProgrammeDescription(String programmeDescription) {
             this.programmeDescription = programmeDescription;
             return this;
         }
 
+        /**
+         * Get the author or authors of the programme that are printed in the help text. See
+         * {@link ProgrammeDetails#author}.
+         */
         public String getAuthor() {
             return author;
         }
 
+        /**
+         * Sets the author or authors of the programme that are printed in the help text. See
+         * {@link ProgrammeDetails#author}.
+         */
         public ProgrammeDetails setAuthor(String author) {
             this.author = author;
             return this;
         }
 
+        /**
+         * Get the version that is printed in the help text. See {@link ProgrammeDetails#version}.
+         */
         public String getVersion() {
             return version;
         }
 
+        /**
+         * Sets the version that is printed in the help text. See {@link ProgrammeDetails#version}.
+         */
         public ProgrammeDetails setVersion(String version) {
             this.version = version;
             return this;
+        }
+
+
+
+        @Override
+        public String toString() {
+            return "ProgrammeDetails{" +
+                    "commandName='" + commandName + "', " +
+                    "programmeName=\"" + programmeName + "\", " +
+                    "programmeDescription=" + programmeDescription + ", " +
+                    "author=\"" + author + "\", " +
+                    "version=\"" + version + "\"" +
+                    "}";
         }
 
     }
@@ -1063,24 +1121,56 @@ public class ArgsParser {
         // All measurements are mono-font cells.
         private int infoWidth;
 
+        /**
+         * Maximum number or total number of monospaced charters per line.
+         */
         private static final int LINE_WIDTH = 100;
 
+        /**
+         * Minimum gap between the left and the right side of the name lines in the name box.
+         */
         private static final int NAME_MARGIN = 5;
 
-        private static final int BASE_NAME_COL_WIDTH = 40;
+        /**
+         * The starting width of the key column before it is expanded to fit longer long keys.
+         */
+        private static final int BASE_KEY_COL_WIDTH = 40;
 
-        private static final int EXTRA_NAME_SPACE = 10;
+        /**
+         * The maximum extra space that can be used for longer long keys. If the width of key column exceeds the sum of
+         * this and {@link HelpBuilder#BASE_KEY_COL_WIDTH} an error is thrown.
+         */
+        private static final int EXTRA_KEY_SPACE = 10;
 
+        /**
+         * The margin on the left-hand side of the key column.
+         */
         private static final int LEFT_MARGIN_WIDTH = 2;
 
+        /**
+         * The minimum gap between the key column and the argument information.
+         */
         private static final int KEY_DESCRIPTION_GAP = 3;
 
+        /**
+         * Default description for the special help argument.
+         */
         private static final String HELP_FLAG_DESCRIPTION = "Use to print this help.";
 
+        /**
+         * The default "key" used in the key column for an argument with usage {@link E_Usage#LIST}.
+         */
         private static final String LIST_USAGE_KEY = "[SPACE DELIMITED LIST]";
 
+        /**
+         * The usage text for an argument with usage {@link E_Usage#LIST}.
+         */
         private static final String LIST_USAGE = "List, a space delimited list of values at the end of the command.";
 
+        /**
+         * The prefix that comes before each example block. See {@link ArgOption#shortValueExample} and
+         * {@link ArgOption#longValueExample}.
+         */
         private static final String EXAMPLE_PREFIX = "Example: ";
 
 
@@ -1245,8 +1335,7 @@ public class ArgsParser {
         }
 
         private String buildLongKeyString(String longKey, String keyLine) {
-            // Note(Max): Reassigning to keyLine looks like it might be wrong.
-            int spaceForLongKey = (BASE_NAME_COL_WIDTH + EXTRA_NAME_SPACE) - (keyLine.length());
+            int spaceForLongKey = (BASE_KEY_COL_WIDTH + EXTRA_KEY_SPACE) - (keyLine.length());
 
             if ("--".length() + longKey.length() + KEY_DESCRIPTION_GAP > spaceForLongKey) {
                 int maxLongKeyLength = spaceForLongKey - (2 + KEY_DESCRIPTION_GAP);
@@ -1255,11 +1344,12 @@ public class ArgsParser {
                         "Long key: " + longKey);
             }
 
+            // Note(Max): Reassigning to keyLine looks like it might be wrong.
             keyLine += "--" + longKey + dupeString(" ", KEY_DESCRIPTION_GAP);
 
             // This is where you would change the layout so that you only let the extra space be used a chunk at a time
             // rather than a space at a time I.E. use 5 spaces rather than 2.
-            int extraSpace = keyLine.length() - BASE_NAME_COL_WIDTH;
+            int extraSpace = keyLine.length() - BASE_KEY_COL_WIDTH;
             if (extraSpace > 0) {
                 keyLine += dupeString(" ", extraSpace);
             }
@@ -1286,7 +1376,7 @@ public class ArgsParser {
         private int calcInfoWidth(String keyLine) {
             // Note(Max): I would be easy to argue for this to set the field and not return a value, but I like how it
             // looks when it returns a value, so I am going to leave it like this for the moment.
-            int indentWidth = Math.max(keyLine.length(), BASE_NAME_COL_WIDTH);
+            int indentWidth = Math.max(keyLine.length(), BASE_KEY_COL_WIDTH);
 
             return LINE_WIDTH - indentWidth;
         }
