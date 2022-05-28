@@ -1555,14 +1555,7 @@ public class ArgsParser {
         }
 
         public ParseArgumentException(String message) {
-            super(message + "\n" + "Use -h, --help or --Help for help.");
-        }
-
-
-
-        @Override
-        public synchronized Throwable fillInStackTrace() {
-            return (parseErrorsDisplayStackTrace) ? super.fillInStackTrace() : null;
+            super(message + "\n" + "Use -h, --help or --Help for help.", null, false, parseErrorsDisplayStackTrace);
         }
 
     }
