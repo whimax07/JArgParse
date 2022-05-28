@@ -58,9 +58,9 @@ public class ShortKeyTests {
         assertTrue(argsParser.isPassed("b"));
         assertTrue(argsParser.isLongPassed("Set-Background"));
         assertTrue(argsParser.isShortPassed('b'));
-        assertNotNull(argsParser.getArgument(EnumArgOptions.BACKGROUND));
-        assertNotNull(argsParser.getArgument("Set-Background"));
-        assertNotNull(argsParser.getArgument("b"));
+        assertNotNull(argsParser.getResult(EnumArgOptions.BACKGROUND));
+        assertNotNull(argsParser.getResult("Set-Background"));
+        assertNotNull(argsParser.getResult("b"));
     }
 
     /**
@@ -80,9 +80,9 @@ public class ShortKeyTests {
         assertFalse(argsParser.isPassed("b"));
         assertFalse(argsParser.isLongPassed("Set-Background"));
         assertFalse(argsParser.isShortPassed('b'));
-        assertNull(argsParser.getArgument(EnumArgOptions.BACKGROUND));
-        assertNull(argsParser.getArgument("Set-Background"));
-        assertNull(argsParser.getArgument("b"));
+        assertNull(argsParser.getResult(EnumArgOptions.BACKGROUND));
+        assertNull(argsParser.getResult("Set-Background"));
+        assertNull(argsParser.getResult("b"));
     }
 
 
@@ -110,7 +110,7 @@ public class ShortKeyTests {
 
         assertTrue(argsParser.isPassed("a"));
         assertTrue(argsParser.isShortPassed('a'));
-        assertNotNull(argsParser.getShortArgument('a'));
+        assertNotNull(argsParser.getResultShort('a'));
     }
 
     @Test
@@ -119,7 +119,7 @@ public class ShortKeyTests {
         String[] input = new String[] {"-r"};
         argsParser.pareArgs(input);
 
-        String passValue = argsParser.getArgument(EnumArgOptions.RESET).getValue();
+        String passValue = argsParser.getResult(EnumArgOptions.RESET).getValue();
         assertNotNull(passValue);
         assertTrue(passValue.isEmpty());
     }
@@ -135,9 +135,9 @@ public class ShortKeyTests {
         assertFalse(argsParser.isPassed("r"));
         assertFalse(argsParser.isLongPassed("Use-Defaults"));
         assertFalse(argsParser.isShortPassed('r'));
-        assertNull(argsParser.getArgument(EnumArgOptions.RESET));
-        assertNull(argsParser.getArgument("Use-Defaults"));
-        assertNull(argsParser.getArgument("r"));
+        assertNull(argsParser.getResult(EnumArgOptions.RESET));
+        assertNull(argsParser.getResult("Use-Defaults"));
+        assertNull(argsParser.getResult("r"));
     }
 
 

@@ -34,7 +34,7 @@ public class LongKeyTests {
         assertDoesNotThrow(() -> argsParser.pareArgs(input));
 
         assertTrue(argsParser.isPassed(EnumArgOptions.TEXT));
-        assertTrue(argsParser.getArgument(EnumArgOptions.TEXT).getValue().isEmpty());
+        assertTrue(argsParser.getResult(EnumArgOptions.TEXT).getValue().isEmpty());
     }
 
     @Test
@@ -48,9 +48,9 @@ public class LongKeyTests {
         assertTrue(argsParser.isPassed("t"));
         assertTrue(argsParser.isLongPassed("Set-Text"));
         assertTrue(argsParser.isShortPassed('t'));
-        assertNotNull(argsParser.getArgument(EnumArgOptions.TEXT));
-        assertNotNull(argsParser.getArgument("Set-Text"));
-        assertNotNull(argsParser.getArgument("t"));
+        assertNotNull(argsParser.getResult(EnumArgOptions.TEXT));
+        assertNotNull(argsParser.getResult("Set-Text"));
+        assertNotNull(argsParser.getResult("t"));
     }
 
     /**
@@ -69,9 +69,9 @@ public class LongKeyTests {
         assertFalse(argsParser.isPassed("Use-Defaults"));
         assertFalse(argsParser.isLongPassed("Use-Defaults"));
         assertFalse(argsParser.isShortPassed('r'));
-        assertNull(argsParser.getArgument(EnumArgOptions.RESET));
-        assertNull(argsParser.getArgument("Use-Defaults"));
-        assertNull(argsParser.getArgument("r"));
+        assertNull(argsParser.getResult(EnumArgOptions.RESET));
+        assertNull(argsParser.getResult("Use-Defaults"));
+        assertNull(argsParser.getResult("r"));
     }
 
 
@@ -97,9 +97,9 @@ public class LongKeyTests {
         assertTrue(argsParser.isPassed("r"));
         assertTrue(argsParser.isLongPassed("Use-Defaults"));
         assertTrue(argsParser.isShortPassed('r'));
-        assertNotNull(argsParser.getArgument(EnumArgOptions.RESET));
-        assertNotNull(argsParser.getArgument("Use-Defaults"));
-        assertNotNull(argsParser.getArgument("r"));
+        assertNotNull(argsParser.getResult(EnumArgOptions.RESET));
+        assertNotNull(argsParser.getResult("Use-Defaults"));
+        assertNotNull(argsParser.getResult("r"));
     }
 
     @Test
@@ -108,7 +108,7 @@ public class LongKeyTests {
         String[] input = new String[] {"--Use-Defaults"};
         argsParser.pareArgs(input);
 
-        String passValue = argsParser.getArgument(EnumArgOptions.RESET).getValue();
+        String passValue = argsParser.getResult(EnumArgOptions.RESET).getValue();
         assertNotNull(passValue);
         assertTrue(passValue.isEmpty());
     }
@@ -124,9 +124,9 @@ public class LongKeyTests {
         assertFalse(argsParser.isPassed("t"));
         assertFalse(argsParser.isLongPassed("Set-Text"));
         assertFalse(argsParser.isShortPassed('t'));
-        assertNull(argsParser.getArgument(EnumArgOptions.TEXT));
-        assertNull(argsParser.getArgument("Set-Text"));
-        assertNull(argsParser.getArgument("t"));
+        assertNull(argsParser.getResult(EnumArgOptions.TEXT));
+        assertNull(argsParser.getResult("Set-Text"));
+        assertNull(argsParser.getResult("t"));
     }
 
 

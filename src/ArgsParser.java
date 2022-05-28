@@ -556,7 +556,7 @@ public class ArgsParser {
      * @return If the option the key is a part of was used it will return a container with the passed value or values.
      * Null is returned if option was not passed.
      */
-    public <E extends Enum<E> & ArgsParser.EnumOptions> ArgReceived getArgument(E option) {
+    public <E extends Enum<E> & ArgsParser.EnumOptions> ArgReceived getResult(E option) {
         return optionResultMap.get(option.get());
     }
 
@@ -568,7 +568,7 @@ public class ArgsParser {
      *
      * @throws ArgumentOptionException If {@code key} is not bound to an option.
      */
-    public ArgReceived getArgument(String key) {
+    public ArgReceived getResult(String key) {
         if (!keyMap.containsKey(key)) {
             throw new ArgumentOptionException("The key (\"" + key + "\") is not bound to an option.");
         }
@@ -591,7 +591,7 @@ public class ArgsParser {
      * @return If the option the key is a part of was used it will return a container with the passed value or values.
      * Null is returned if option was not passed. If the key is not bound null is returned.
      */
-    public ArgReceived getShortArgument(char shortKey) {
+    public ArgReceived getResultShort(char shortKey) {
         return shortResultMap.get(shortKey);
     }
 
@@ -602,7 +602,7 @@ public class ArgsParser {
      * Returns a container with the passed value or values if the option the key is a part of was used.
      * Null is returned if option was not passed. If the key is not bound null is returned.
      */
-    public ArgReceived getLongPassed(String longKey) {
+    public ArgReceived getResultLong(String longKey) {
         return longResultMap.get(longKey);
     }
 
@@ -691,12 +691,15 @@ public class ArgsParser {
         private String description = "";
 
         /**
-         * Set this to true if the argument is supposed to be used without any other arguments. I.E. '--help'.
+         * If true then the option should not be passed with any other option, if it is passed with another argument a
+         * {@link ParseArgumentException} is thrown. If false the user can pass this argument with others. An example
+         * argument with this set to true is {@code --help}.
          */
         private boolean useOnItsOwn = false;
 
         /**
-         * When this is false the user passing the argument more than once will throw an error.
+         * If true the user can pass this argument more than once. If false then should the user passes this argument
+         * more than once an {@link ParseArgumentException} will be thrown.
          */
         private boolean repeatable = false;
 
@@ -827,35 +830,65 @@ public class ArgsParser {
             return this;
         }
 
+        /**
+         * Returns the description that will be included in the generated help for what this argument is used for and
+         * what it does.
+         */
         public String getDescription() {
             return description;
         }
 
+        /**
+         * Set the description that will be included in the generated help for what this argument is used for and what
+         * it does. <br>
+         * <br>
+         * {@code default = "";} <br>
+         * <br>
+         * See {@link ArgOption#description}.
+         */
         public ArgOption setDescription(String description) {
             this.description = description;
             return this;
         }
 
+        /**
+         * Returns the boolean {@link ArgOption#useOnItsOwn}.
+         */
         public boolean isUseOnItsOwn() {
             return useOnItsOwn;
         }
 
         /**
-         * Set this as true and if the key is passed it should be the only key. For example '--help'. <br>
+         * If this is true then the argument should not be passed with another
+         * argument, if it is passed with any other arguments a {@link ParseArgumentException} is thrown. If it is set
+         * to false the user can pass this argument with others. An example argument with this set to true is
+         * {@code --help}. <br>
          * <br>
          * {@code default = false;} <br>
          * <br>
-         * See {@link ArgOption#useOnItsOwn}.
+         * Sets {@link ArgOption#useOnItsOwn}.
          */
         public ArgOption setUseOnItsOwn(boolean useOnItsOwn) {
             this.useOnItsOwn = useOnItsOwn;
             return this;
         }
 
+        /**
+         * Returns the boolean {@link ArgOption#repeatable}.
+         */
         public boolean isRepeatable() {
             return repeatable;
         }
 
+        /**
+         * If this is true the user can pass this argument more than once. If this is
+         * set to false then if the user passes this argument more than once a {@link ParseArgumentException} will be
+         * thrown. <br>
+         * <br>
+         * {@code default = false;} <br>
+         * <br>
+         * Sets {@link ArgOption#repeatable}.
+         */
         public ArgOption setRepeatable(boolean repeatable) {
             this.repeatable = repeatable;
             return this;
@@ -884,8 +917,15 @@ public class ArgsParser {
      */
     public static class ArgReceived {
 
+        /**
+         * The argument used to pass {@link ArgReceived#values}.
+         */
         private final ArgOption option;
 
+        /**
+         * The results array for {@link ArgReceived#option}. This will be empty if the argument is not passed. The size
+         * of this array is the number of times the argument is passed.
+         */
         private final ArrayList<String> values = new ArrayList<>();
 
 
@@ -902,6 +942,9 @@ public class ArgsParser {
 
 
 
+        /**
+         * Returns the argument that the results were passed with.
+         */
         public ArgOption getOption() {
             return option;
         }
@@ -915,12 +958,22 @@ public class ArgsParser {
         }
 
         /**
-         * @return The string passed to the first use of this argument if it is a key-value pair, an empty string if it
-         * was a key that was used or null if the argument has not been used.
+         * If the argument is not used {@code null} is returned. <br>
+         * <br>
+         * If the argument is used at least once a string is returned. The string returned is based on the usage of the
+         * argument. <br>
+         * <ul>
+         *     <li>{@link E_Usage#KEY}: an empty string.</li>
+         *     <li>{@link E_Usage#KEY_VALUE}: the string passed with the first instance of the argument in the command
+         *     passed.</li>
+         *     <li>{@link E_Usage#LIST}: the first item in the list.</li>
+         * </ul>
          */
         public String getValue() {
             return (values.isEmpty()) ? null : values.get(0);
         }
+
+
 
         @Override
         public String toString() {
@@ -1414,8 +1467,9 @@ public class ArgsParser {
      *      <li> ... argList </li>
      * </ol>
      * KEY is 1 and 2. KEY_VALUE is 3 and 4. LIST is 5. <br>
+     * <br>
      * The short key is `k` and the long key is `Key-Word`. argList is a space delimited list. There can only be one
-     * list arg, and they are always at the end of the command. <br>
+     * list arg, and they are always at the end of the command.
      */
     public enum E_Usage {
         /**

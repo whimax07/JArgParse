@@ -24,7 +24,7 @@ public class MixedInputTests {
         ArgsParser argsParser = new ArgsParser(makeProgrammeDetails(), EnumArgOptions.class);
         String[] input = new String[] {"--Set-Text=Hi"};
         argsParser.pareArgs(input);
-        assertNull(argsParser.getArgument(EnumArgOptions.BACKGROUND));
+        assertNull(argsParser.getResult(EnumArgOptions.BACKGROUND));
     }
 
     @Test
@@ -33,8 +33,8 @@ public class MixedInputTests {
         String[] input = new String[] {"--Set-Text=Hi"};
         argsParser.pareArgs(input);
         assertSame(
-                argsParser.getArgument(EnumArgOptions.TEXT),
-                argsParser.getArgument(EnumArgOptions.TEXT.get().getLongKey())
+                argsParser.getResult(EnumArgOptions.TEXT),
+                argsParser.getResult(EnumArgOptions.TEXT.get().getLongKey())
         );
     }
 
@@ -63,9 +63,9 @@ public class MixedInputTests {
         argsParser.pareArgs(input);
 
         assertTrue(argsParser.isPassed("a"));
-        assertEquals(6, argsParser.getArgument("a").getValues().size());
+        assertEquals(6, argsParser.getResult("a").getValues().size());
 
-        ArrayList<String> values = argsParser.getArgument("Aaa").getValues();
+        ArrayList<String> values = argsParser.getResult("Aaa").getValues();
         assertEquals("Hi", values.get(0));
         assertEquals("They", values.get(1));
         assertEquals("Some", values.get(2));
