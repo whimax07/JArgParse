@@ -1,7 +1,4 @@
-# Examples.
-
-
-## Example 1: How to use ArgParse.
+# Example 1: How to use ArgParse.
 To parse the command line arguments passed to your programme do the following.
 1) Construct programme details.
 2) Define the command line options.
@@ -10,7 +7,7 @@ To parse the command line arguments passed to your programme do the following.
 5) Use the String array received by main with the `parse()` method of ArgParse.
 6) Use the public methods of ArgParse to inspect the results of the parse. See the class doc string for a list.
 
-### Constructing programme details.
+## Constructing programme details.
 The `ProgrammeDetails` class contains detail about your programme. It may look like this.
 
 ```java
@@ -32,10 +29,10 @@ class ExampleProgrammeDetails {
 ```
 
 
-### Define the command line options.
+## Define the command line options.
 This is probably the neatest bit of the API. You can pass the options you would like to define in several ways however each comes down to defining an instance of `ArgOption` either in an enum or by instantiating them.
 
-#### Using an enum.
+### Using an enum.
 One of the main API features of ArgParse is that you can use an enum to hold your command line options, and therefore you can index into the results of the parse with that enum.
 
 Enum Example:
