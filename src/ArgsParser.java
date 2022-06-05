@@ -32,6 +32,16 @@ import static java.lang.System.exit;
  * problem with the users configuration and {@link ParseArgumentException} for a problem with the usage of an argument
  * or a failure to parse. <br><br>
  *
+ * The methods for inspecting the results of a parse are:
+ * <ul>
+ *     <li>{@link ArgsParser#isPassed} overloads.</li>
+ *     <li>{@link ArgsParser#isShortPassed}.</li>
+ *     <li>{@link ArgsParser#isLongPassed}.</li>
+ *     <li>{@link ArgsParser#getResult} overloads.</li>
+ *     <li>{@link ArgsParser#getResultShort}.</li>
+ *     <li>{@link ArgsParser#getResultLong}.</li>
+ * </ul> <br>
+ *
  * <b>Example Usage: </b><br>
  *
  * <pre> {@code

@@ -31,10 +31,9 @@ public class ShortKeyTests {
     void fail_pass_value_to_key() {
         ArgsParser argsParser = new ArgsParser(
                 new ArgsParser.ProgrammeDetails().setCommandName("Test_Prog"),
-                new ArgsParser.ArgOption[] {
-                        new ArgsParser.ArgOption().setShortKey('a').setUsage(ArgsParser.E_Usage.KEY)
-                }
+                new ArgsParser.ArgOption().setShortKey('a').setUsage(ArgsParser.E_Usage.KEY)
         );
+
         String[] input = new String[] {"-a", "abc"};
 
         assertThrows(ArgsParser.ParseArgumentException.class, () -> argsParser.pareArgs(input));
@@ -101,10 +100,9 @@ public class ShortKeyTests {
     void pass_confirm_key_passed() {
         ArgsParser argsParser = new ArgsParser(
                 new ArgsParser.ProgrammeDetails().setCommandName("Test_Prog"),
-                new ArgsParser.ArgOption[] {
-                        new ArgsParser.ArgOption().setShortKey('a').setUsage(ArgsParser.E_Usage.KEY)
-                }
+                new ArgsParser.ArgOption().setShortKey('a').setUsage(ArgsParser.E_Usage.KEY)
         );
+
         String[] input = new String[] {"-a"};
         argsParser.pareArgs(input);
 

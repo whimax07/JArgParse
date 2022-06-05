@@ -50,13 +50,11 @@ public class MixedInputTests {
     void pass_multiple_same_input_arguments_allowed() {
         ArgsParser argsParser = new ArgsParser(
                 new ArgsParser.ProgrammeDetails().setCommandName("Test_Prog"),
-                new ArgsParser.ArgOption[] {
-                        new ArgsParser.ArgOption()
-                                .setShortKey('a')
-                                .setLongKey("Aaa")
-                                .setRepeatable(true)
-                                .setUsage(ArgsParser.E_Usage.KEY_VALUE)
-                }
+                new ArgsParser.ArgOption()
+                        .setShortKey('a')
+                        .setLongKey("Aaa")
+                        .setRepeatable(true)
+                        .setUsage(ArgsParser.E_Usage.KEY_VALUE)
         );
 
         String[] input = new String[] {"--Aaa=Hi", "--Aaa=They", "-a", "Some", "--Aaa=Do", "-a", "ABC", "-a", "def"};
