@@ -3,7 +3,10 @@ A command line, argument parser that can be included with just one file, [ArgsPa
 
 
 ### What it can do.
+ - A single file with no dependence outside the standard library.
+ - Automatically generated help and information dialog.
  - Suppress stack traces from arg parse exceptions.
+ - Ability to use an enum for result indexing. 
 
 ### Things to finish or add.
  - Add details of what it can and cannot do.

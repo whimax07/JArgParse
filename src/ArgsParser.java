@@ -7,9 +7,9 @@ import java.util.HashMap;
 import static java.lang.System.exit;
 
 /**
- * <b>ArgParser</b> provides a minimal command line parsing utility to allow you to build a programme that takes command line
- * inputs quickly. It is contained in one file to allow easy copying into a project and only uses very basic standard
- * library imports.<br>
+ * <b>ArgParser</b> provides a minimal command line parsing utility to allow you to build a programme that takes command
+ * line inputs quickly. It is contained in one file to allow easy copying into a project and only uses very basic
+ * standard library imports.<br>
  * <br>
  * It has 3 main selling points.
  * <ol>
