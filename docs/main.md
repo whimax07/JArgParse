@@ -84,4 +84,130 @@ enum CommandDrinksCLOptions implements ArgsParser.EnumOptions {
 
 Non-enum Example:
 
+```java
+import ArgParser;
+
+class ExampleProgram {
+    
+    // Save the ArgOptions somewhere, so you can use them to index the results.
+    private ArgsParser.ArgOption tableNumber;
+
+    // Save the ArgOptions somewhere, so you can use them to index the results.
+    private ArgsParser.ArgOption drinks;
+
+    // Save the ArgOptions somewhere, so you can use them to index the results.
+    private ArgsParser.ArgOption comments;    
+    
+    // ...
+    
+    private void constructParseOptions() {
+        tableNumber = new ArgsParser.ArgOption()
+                .setShortKey('t')
+                .setLongKey("Table-Number")
+                .setUsage(ArgsParser.E_Usage.KEY_VALUE)
+                .setUseOnItsOwn(true)
+                .setDescription("Use this to set your table number.")
+                .setShortValueExample("15")
+                .setLongValueExample("15");
+
+        drinks = new ArgsParser.ArgOption()
+                .setShortKey('d')
+                .setLongKey("Drink")
+                .setUsage(ArgsParser.E_Usage.KEY_VALUE)
+                .setRepeatable(true)
+                .setDescription("Use this to order a drink. drink_size and quantity can be empty "
+                        + "(keep the colons).")
+                .setShortValueExample("{drink_name}:{drink_size}:{quantity}")
+                .setLongValueExample("{drink_name}:{drink_size}:{quantity}");
+
+        comments = new ArgsParser.ArgOption()
+                .setUsage(ArgsParser.E_Usage.LIST)
+                .setDescription("Use this to add any comments to your order.")
+                .setListExample("Can we please get one of the diet-cokes without ice?");        
+    }
+    
+    // ...
+    
+}
+
+
+```
+
+
+## Constructing ArgParse
+
+### Using an enum
+```java
+import ArgParser;
+
+class ExampleProgram {
+    
+    private ArgsParser argsParser;
+    
+    // ...
+    
+    private void makeArgParser() {
+        argsParser = new ArgsParser(
+                ExampleProgrammeDetails.makeExample(),
+                CommandDrinksCLOptions.class
+        );
+    }
+    
+    // ...
+    
+}
+```
+
+### Not using an enum
+```java
+import ArgParser;
+
+class ExampleProgram {
+    
+    // ...
+    
+    private ArgsParser argsParser;
+    
+    // ...
+    
+    private void makeArgParser() {
+        argsParser = new ArgsParser(
+                ExampleProgrammeDetails.makeExample(),
+                tableNumber,
+                drinks,
+                comments
+        );
+    }
+    
+    // ...
+    
+}
+```
+
+## Configuring ArgParse
+The programmer should configure ArgParse before parsing. Currently, that means not printing a stack traces when `ParseArgumentException` is thrown. This is done with `setParseErrorsDisplayStackTrace`.
+
+## Parsing a command line
+This is pretty easy, just passed the String array passed to `main` to the `parse` method of ArgParse. 
+
+```java
+class ExampleProgram {
+
+    // ...
+    
+    public ExampleProgram(String[] argv) {
+        // If you are NOT using an enum you would call `constructParseOptions()` here.
+        makeArgParser();
+        argParse.parse(argv);
+        
+        resolveCommandLineInput();
+    }
+    
+    public static main(String[] argv) {
+        new examplePrograme(argv);
+    }
+    
+}
+```
+
 REST TBD
