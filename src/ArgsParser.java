@@ -269,7 +269,11 @@ public class ArgsParser {
 
         }
 
-        return new ArgsParser(declaredClass, programmeDetails);
+        return new ArgsParser(programmeDetails, declaredClass);
+    }
+
+    private ArgsParser(ProgrammeDetails programmeDetails, Class<?> declaredClass) {
+
     }
 
 
