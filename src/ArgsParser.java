@@ -256,6 +256,22 @@ public class ArgsParser {
         }
     }
 
+    public static ArgsParser parser(ProgrammeDetails programmeDetails) {
+        final Class<?>[] declaredClasses = EnumArgument.class.getDeclaredClasses();
+        if (declaredClasses.length < 1) {
+
+        } else if (declaredClasses.length > 1) {
+
+        }
+
+        final Class<?> declaredClass = declaredClasses[0];
+        if (!declaredClass.isEnum()) {
+
+        }
+
+        return new ArgsParser(declaredClass, programmeDetails);
+    }
+
 
 
     /**
@@ -1480,7 +1496,7 @@ public class ArgsParser {
         }
 
         private void mergeAndIndent(String keyLine, ArrayList<String> infoLines) {
-            if (infoLines.size() >= 1) {
+            if (!infoLines.isEmpty()) {
                 String padding = dupeString(" ", LINE_WIDTH - (infoWidth + keyLine.length()));
                 infoLines.set(0, keyLine + padding + infoLines.get(0));
             }
