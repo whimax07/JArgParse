@@ -145,8 +145,9 @@ public class ArgsParser {
         this(programmeDetails, convertEnumToOptionsList(enumArgOptions));
     }
 
-    private static <E extends Enum<E> & EnumOptions> ArrayList<ArgOption> convertEnumToOptionsList(
-            Class<E> enumArgOptions) {
+    private static <E extends EnumOptions> ArrayList<ArgOption> convertEnumToOptionsList(
+            Class<? extends E> enumArgOptions
+    ) {
         ArrayList<ArgOption> argOptions = new ArrayList<>();
         for (EnumOptions enumOption : enumArgOptions.getEnumConstants()) {
             argOptions.add(enumOption.get());
@@ -256,24 +257,45 @@ public class ArgsParser {
         }
     }
 
-    public static ArgsParser parser(ProgrammeDetails programmeDetails) {
-        final Class<?>[] declaredClasses = EnumArgument.class.getDeclaredClasses();
+    /**
+     * This function provides a static constructor of {@link ArgsParser} to auto detect a a Enum that implements
+     * {@link EnumOptions} and is annotated with {@link EnumArgument} annotation. The result is the same as calling
+     * {@link ArgsParser#ArgsParser(ProgrammeDetails, Class)} explicitly.
+     */
+    public static ArgsParser autoDetectArgumentEnum(ProgrammeDetails programmeDetails) {
+        // It appears that you have to do either a compile time check or a complex Runtime check to find the list of
+        // declaredClasses. Neither approach fits very well with the idea of the lib. :(
+        final Class<?>[] declaredClasses = EnumArgument.class.???;
         if (declaredClasses.length < 1) {
-
+            throw new RuntimeException("No classes with the EnumArgument annotation have been found.");
         } else if (declaredClasses.length > 1) {
-
+            throw new RuntimeException(String.format(
+                    "Only one class can be marked with the EnumArgument annotation. Classes found: %s.",
+                    Arrays.toString(declaredClasses)
+            ));
         }
 
         final Class<?> declaredClass = declaredClasses[0];
         if (!declaredClass.isEnum()) {
-
+            throw new RuntimeException(String.format(
+                    "Only Enum class may be annotated with EnumArgument annotation. Annotated Class %s.",
+                    declaredClass.getName()
+            ));
         }
 
-        return new ArgsParser(programmeDetails, declaredClass);
-    }
+        final Class<?>[] implementedInterfaces = declaredClass.getInterfaces();
+        if (!Arrays.asList(implementedInterfaces).contains(EnumOptions.class)) {
+            throw new RuntimeException(String.format(
+                    "The Enum class must implement the EnumOptions interface when annotated with EnumArgument. Class: %s.",
+                    declaredClass.getName()
+            ));
+        }
 
-    private ArgsParser(ProgrammeDetails programmeDetails, Class<?> declaredClass) {
+        // SAFETY(Max): We assure that the type erased class does in fact implement the EnumOptions interface above.
+        @SuppressWarnings("unchecked")
+        final Class<? extends EnumOptions> castedClass = (Class<? extends EnumOptions>) declaredClass;
 
+        return new ArgsParser(programmeDetails, convertEnumToOptionsList(castedClass));
     }
 
 
@@ -1629,5 +1651,9 @@ public class ArgsParser {
     public interface EnumOptions {
         ArgOption get();
     }
+
+
+
+    public @interface EnumArgument {  }
 
 }

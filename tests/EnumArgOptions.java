@@ -1,3 +1,4 @@
+@ArgsParser.EnumArgument
 enum EnumArgOptions implements ArgsParser.EnumOptions {
 
     BACKGROUND(new ArgsParser.ArgOption()
