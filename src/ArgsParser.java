@@ -3,6 +3,7 @@
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Objects;
 
 import static java.lang.System.exit;
 
@@ -920,6 +921,37 @@ public class ArgsParser {
         }
 
 
+        
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            ArgOption argOption = (ArgOption) o;
+            return shortKey == argOption.shortKey 
+                    && useOnItsOwn == argOption.useOnItsOwn 
+                    && repeatable == argOption.repeatable 
+                    && Objects.equals(longKey, argOption.longKey) 
+                    && usage == argOption.usage 
+                    && Objects.equals(shortValueExample, argOption.shortValueExample) 
+                    && Objects.equals(longValueExample, argOption.longValueExample) 
+                    && Objects.equals(listExample, argOption.listExample) 
+                    && Objects.equals(description, argOption.description);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(
+                    shortKey, 
+                    longKey, 
+                    usage,
+                    shortValueExample,
+                    longValueExample,
+                    listExample,
+                    description,
+                    useOnItsOwn,
+                    repeatable
+            );
+        }
 
         @Override
         public String toString() {
@@ -975,15 +1007,15 @@ public class ArgsParser {
         }
 
         /**
-         * @return A list of length n, where n is the number of times the argument has been used. If the argument is a
+         * @return A copy of the list of values passed with the associated {@link ArgOption}. If the argument is a
          * key type then the string will be empty.
          */
         public ArrayList<String> getValues() {
-            return values;
+            return new ArrayList<>(values);
         }
 
         /**
-         * If the argument is not used {@code null} is returned. <br>
+         * If the associated {@link ArgOption} was not used {@code null} is returned. <br>
          * <br>
          * If the argument is used at least once a string is returned. The string returned is based on the usage of the
          * argument. <br>
