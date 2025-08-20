@@ -14,9 +14,9 @@ import static java.lang.System.exit;
  * <br>
  * It has 3 main selling points.
  * <ol>
- *     <li>A single file with no dependence outside of the standard library.</li>
+ *     <li>A single file with no dependence outside the standard library.</li>
  *     <li>Automatically generated help and information dialog.</li>
- *     <li>Enum indexing into {@link ArgsParser} to get the results of the parse if an enum was passed to it's
+ *     <li>Enum indexing into {@link ArgsParser} to get the results of the parse if an enum was passed to its
  *     constructor.</li>
  * </ol>
  *
@@ -656,7 +656,7 @@ public class ArgsParser {
      *     <li> An example of how to use the long key, {@link ArgOption#longValueExample}. </li>
      *     <li> An example of how to use the argument if it is a list, {@link ArgOption#listExample}. </li>
      *     <li> A description of what the argument does and what it is used for, {@link ArgOption#description}. </li>
-     *     <li> Whether the argument should be passed on it's own, {@link ArgOption#useOnItsOwn}. </li>
+     *     <li> Whether the argument should be passed on its own, {@link ArgOption#useOnItsOwn}. </li>
      *     <li> Whether the argument can be used more than once, {@link ArgOption#repeatable}. </li>
      * </ul>
      *
@@ -1512,7 +1512,7 @@ public class ArgsParser {
         }
 
         private void mergeAndIndent(String keyLine, ArrayList<String> infoLines) {
-            if (infoLines.size() >= 1) {
+            if (!infoLines.isEmpty()) {
                 String padding = dupeString(" ", LINE_WIDTH - (infoWidth + keyLine.length()));
                 infoLines.set(0, keyLine + padding + infoLines.get(0));
             }
